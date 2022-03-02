@@ -1,5 +1,13 @@
 import React from 'react'
 import UserAvatar from '../../assets/1.png'
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/pagination';
+
 
 const testimonial_metadata = [
   {
@@ -23,11 +31,16 @@ export const Testimonial = () => {
     <section id="testimonial">
       <h5>Review from colleagues</h5>
       <h2>Testimonials</h2>
-      <div className="container testimonials__container">
+      <Swiper className="container testimonials__container"
+        modules={[Pagination]}
+        spaceBetween={50}
+        slidesPerView={1}        
+        pagination={{ clickable: true }}
+      >
         {
           testimonial_metadata.map((testimonial, index) => {
             return(
-              <article key={index} className="testimonial">
+              <SwiperSlide key={index} className="testimonial">
                 <div className="client__avatar">
                   <img src={testimonial.avatar} alt={testimonial.name} />            
                 </div>
@@ -35,11 +48,11 @@ export const Testimonial = () => {
                   <small className="client__review">
                     {testimonial.review}
                 </small>
-              </article>
+              </SwiperSlide>
             )
           })
         }
-      </div>
+      </Swiper>
     </section>
   )
 }
