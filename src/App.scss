@@ -34,6 +34,10 @@ $transition: all 400ms ease;
     display: none;
 }
 
+html{
+    scroll-behavior: smooth;
+}
+
 body{
     font-family: 'Poppins', sans-serif;
     background: $color-bg;

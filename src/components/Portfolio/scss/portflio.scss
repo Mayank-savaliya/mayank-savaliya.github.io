@@ -8,15 +8,28 @@
     background-color: $color-bg-variant;
     padding: 1.2rem;
     border-radius: 2rem;
+    height: max-content;
     border: 1px solid transparent;
     transition: $transition;
     &:hover{
         border-color: $color-primary-variant;
         background-color: transparent;
-
     }
 }
-
+.project__description{
+    margin-bottom: 1.2rem;
+}
+.project__description-icon{
+    color: $color-primary;
+    margin-top: 2px;
+    min-width: 16px;
+    min-height: 16px;
+}
+.project__description li{
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
 .portfolio__item-img{
     border-radius: 1.5rem;
     overflow: hidden;
@@ -29,7 +42,7 @@
 .portfolio__item-cta{
      display: flex;
      gap: 2rem;
-     margin-bottom: 1rem;
+    //  margin-bottom: 1rem;
 }
 
 // ###### MEDIA QUERY ######

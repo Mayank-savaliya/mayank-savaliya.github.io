@@ -3,36 +3,30 @@ import {BiCheck} from 'react-icons/bi'
 const Services = () => {
   return (
     <section id="services">
-      <h5>What I Offer</h5>
+      <h5>You can contact me for</h5>
       <h2>Services</h2>
       <div className="container services__container">
         <article className="service">
           <div className="service__head">
-            <h3>UI/UI Design</h3>
+            <h3>Front End</h3>
           </div>
           <ul className="service__list">
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Lorem ipsum, dolor shit amit
+                Blazing fast multi page front-end that is highly scalable
               </p>
             </li>
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Lorem ipsum, dolor shit amit
+                A front-end that is not only fast but also beautiful
               </p>
             </li>
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Lorem ipsum, dolor shit amit
-              </p>
-            </li>
-            <li>
-              <BiCheck className='service__list-icon'/>
-              <p>
-                Lorem ipsum, dolor shit amit
+                Cross Device compatibile
               </p>
             </li>
           </ul>
@@ -40,75 +34,40 @@ const Services = () => {
         {/* END OF UX */}
         <article className="service">
           <div className="service__head">
-            <h3>Web Development</h3>
+            <h3>Backend Development</h3>
           </div>
           <ul className="service__list">
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Lorem ipsum, dolor shit amit
+                A complete web app or A.P.I only backend using ruby on Rails
+                with payments, emailers and asynchronous jobs management
               </p>
             </li>
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Lorem ipsum, dolor shit amit
+                Backend using NodeJs and Express
               </p>
-            </li>
-            <li>
-              <BiCheck className='service__list-icon'/>
-              <p>
-                Lorem ipsum, dolor shit amit
-              </p>
-            </li>
-            <li>
-              <BiCheck className='service__list-icon'/>
-              <p>
-                Lorem ipsum, dolor shit amit
-              </p>
-            </li>
-            <li>
-              <BiCheck className='service__list-icon'/>
-              <p>
-                Lorem ipsum, dolor shit amit
-              </p>
-            </li>
-            <li>
-              <BiCheck className='service__list-icon'/>
-              <p>
-                Lorem ipsum, dolor shit amit
-              </p>
-            </li>
+            </li>          
           </ul>
         </article>
         {/* End of Web Development */}
         <article className="service">
           <div className="service__head">
-            <h3>Content Creation</h3>
+            <h3>Web 3.0</h3>
           </div>
           <ul className="service__list">
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Lorem ipsum, dolor shit amit
+                Smart Contracts
               </p>
             </li>
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Lorem ipsum, dolor shit amit
-              </p>
-            </li>
-            <li>
-              <BiCheck className='service__list-icon'/>
-              <p>
-                Lorem ipsum, dolor shit amit
-              </p>
-            </li>
-            <li>
-              <BiCheck className='service__list-icon'/>
-              <p>
-                Lorem ipsum, dolor shit amit
+                ERC20 Tokens
               </p>
             </li>
           </ul>
