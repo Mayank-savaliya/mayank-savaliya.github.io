@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/static/css/main.ecb1b4e8.css",
-    "main.js": "/static/js/main.d90e1115.js",
+    "main.js": "/static/js/main.66027a77.js",
     "static/media/IITKGPStaticWebsite.png": "/static/media/IITKGPStaticWebsite.1078203752ad6e6ed560.png",
     "static/media/ME_WHEN_THE.jpg": "/static/media/ME_WHEN_THE.3dab983cb9a2d0809031.jpg",
     "static/media/AlmaConnect.png": "/static/media/AlmaConnect.18e6eb26a5bca8570852.png",
     "static/media/KarmaBoxFeed.png": "/static/media/KarmaBoxFeed.f32a506ea88ff12752eb.png",
     "static/media/About.jpg": "/static/media/About.ba7c9f2c450c5f60e3e3.jpg",
-    "static/media/Mayank_Savaliya_Resume.pdf": "/static/media/Mayank_Savaliya_Resume.afea2c2071889b2ddd55.pdf",
+    "static/media/Mayank_Savaliya_Resume.pdf": "/static/media/Mayank_Savaliya_Resume.4b3b96f02d1251c4b689.pdf",
     "static/media/backgroundPattern.png": "/static/media/backgroundPattern.c67b8fc6f95b0a6a5373.png",
     "index.html": "/index.html",
     "main.ecb1b4e8.css.map": "/static/css/main.ecb1b4e8.css.map",
-    "main.d90e1115.js.map": "/static/js/main.d90e1115.js.map"
+    "main.66027a77.js.map": "/static/js/main.66027a77.js.map"
   },
   "entrypoints": [
     "static/css/main.ecb1b4e8.css",
-    "static/js/main.d90e1115.js"
+    "static/js/main.66027a77.js"
   ]
 }
