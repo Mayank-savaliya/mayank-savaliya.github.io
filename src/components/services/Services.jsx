@@ -47,7 +47,7 @@ const Services = () => {
             <li>
               <BiCheck className='service__list-icon'/>
               <p>
-                Backend using NodeJs and Express
+                NoSql database like mongoDB and highly efficient search queries using ElasticSearch
               </p>
             </li>          
           </ul>

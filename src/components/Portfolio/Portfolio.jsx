@@ -3,6 +3,7 @@ import React from "react";
 import { BiCheck } from "react-icons/bi";
 import KarmaBoxFeed from "../../assets/KarmaBoxFeed.png";
 import IITKGPStaticWebsite from "../../assets/IITKGPStaticWebsite.png";
+import DataMine from "../../assets/DataMine.png";
 import AlmaConnectIn from "../../assets/AlmaConnect.png";
 
 export const Portfolio = () => {
@@ -11,7 +12,7 @@ export const Portfolio = () => {
             <h5>My Recent Work</h5>
             <h2>Portfolio</h2>
             <div className="container portfolio__container">
-                <article className="portfolio__item">
+                <a className="portfolio__item" href="https://www.almaconnect.com" target="_blank">
                     <div className="portfolio__item-img">
                         <img src={AlmaConnectIn} alt="Feed " />
                     </div>
@@ -53,9 +54,9 @@ export const Portfolio = () => {
                             Visit AlmaConnect
                         </a>
                     </div>
-                </article>
+                </a>
 
-                <article className="portfolio__item">
+                <a className="portfolio__item" href="https://news.almaconnect.com/" target="_blank">
                     <div className="portfolio__item-img">
                         <img src={KarmaBoxFeed} alt="Feed " />
                     </div>
@@ -98,11 +99,49 @@ export const Portfolio = () => {
                             Visit Karmabox
                         </a>
                     </div>
-                </article>
+                </a>
+                <a className="portfolio__item" href="https://news.almaconnect.com/data_mine" target="_blank">
+                    <div className="portfolio__item-img">
+                        <img src={DataMine} alt="IIT KGP" />
+                    </div>
+                    <h3>Keep Your Alumni Directory Updated</h3>
+                    <article className="project__description">
+                        <ul>
+                            <li>
+                                <BiCheck className="project__description-icon" />
+                                <p>
+                                    Get real-time employment data of your alumni.
+                                </p>
+                            </li>
+                            <li>
+                                <BiCheck className="project__description-icon" />
+                                <p>
+                                    Receive updates on your alumni when they switch jobs, move up the ladder or transition into other careers.
+                                </p>
+                            </li>
+                            <li>
+                                <BiCheck className="project__description-icon" />
+                                <p>
+                                    Streamline and Navigate easily through vast amounts of alumni data with our advanced filters and unlock precise insights.
+                                </p>
+                            </li>
+                        </ul>
+                    </article>
 
+                    <div className="portfolio__item-cta">
+                        {/* <a href="https://github.com/alma-connect/karmabox-react" className='btn' target="_blank">IIT KGP</a> */}
+                        <a
+                            href="https://news.almaconnect.com/data_mine"
+                            className="btn btn-primary"
+                            target="_blank"
+                        >
+                            Visit DataMine
+                        </a>
+                    </div>
+                </a>
                 <article className="portfolio__item">
                     <div className="portfolio__item-img">
-                        <img src={IITKGPStaticWebsite} alt="IIT KGP" />
+                        <img src={IITKGPStaticWebsite} alt="IIMA" />
                     </div>
                     <h3>Fully Automated Static Websites Creation</h3>
 
@@ -132,11 +171,11 @@ export const Portfolio = () => {
                     <div className="portfolio__item-cta">
                         {/* <a href="https://github.com/alma-connect/karmabox-react" className='btn' target="_blank">IIT KGP</a> */}
                         <a
-                            href="http://alumni.iitkgp.ac.in.s3-website.ap-south-1.amazonaws.com/"
+                            href="https://alumni.iima.ac.in/"
                             className="btn btn-primary"
                             target="_blank"
                         >
-                            Visit IIT KGP
+                            Visit IIMA
                         </a>
                     </div>
                 </article>
