@@ -69,7 +69,7 @@ export const Portfolio = () => {
                                     A personalised feed<i>(BOX)</i> for an
                                     organisation showing related news
                                     <i>(KARMA) </i>
-                                    from 1000+ news sources across the web and
+                                    from 400,000+ news sources across the web and
                                     hence the name KARMABOX 🙃
                                 </p>
                             </li>
