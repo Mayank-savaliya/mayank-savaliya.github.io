@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.78aa55e8.css",
-    "main.js": "/static/js/main.419d6714.js",
+    "main.css": "/static/css/main.d07f920f.css",
+    "main.js": "/static/js/main.ea2815ec.js",
     "static/media/DataMine.png": "/static/media/DataMine.f22d9209a3ac99796cf1.png",
     "static/media/IITKGPStaticWebsite.png": "/static/media/IITKGPStaticWebsite.1078203752ad6e6ed560.png",
     "static/media/ME_WHEN_THE.jpg": "/static/media/ME_WHEN_THE.3dab983cb9a2d0809031.jpg",
@@ -9,13 +9,16 @@
     "static/media/KarmaBoxFeed.png": "/static/media/KarmaBoxFeed.f32a506ea88ff12752eb.png",
     "static/media/About.jpg": "/static/media/About.ba7c9f2c450c5f60e3e3.jpg",
     "static/media/Mayank_Savaliya_Resume.pdf": "/static/media/Mayank_Savaliya_Resume.177ca6c3ccf0a9794477.pdf",
+    "static/media/Bryant.c3a944a1.png": "/static/media/Bryant.c3a944a1.c3a944a1c0ffe4065f9d.png",
+    "static/media/Louis.a2b6cd39.png": "/static/media/Louis.a2b6cd39.a2b6cd39d9a54ae57029.png",
+    "static/media/Augsburg.94cc6dba.png": "/static/media/Augsburg.94cc6dba.94cc6dba3a31c02b75c3.png",
     "static/media/backgroundPattern.png": "/static/media/backgroundPattern.c67b8fc6f95b0a6a5373.png",
     "index.html": "/index.html",
-    "main.78aa55e8.css.map": "/static/css/main.78aa55e8.css.map",
-    "main.419d6714.js.map": "/static/js/main.419d6714.js.map"
+    "main.d07f920f.css.map": "/static/css/main.d07f920f.css.map",
+    "main.ea2815ec.js.map": "/static/js/main.ea2815ec.js.map"
   },
   "entrypoints": [
-    "static/css/main.78aa55e8.css",
-    "static/js/main.419d6714.js"
+    "static/css/main.d07f920f.css",
+    "static/js/main.ea2815ec.js"
   ]
 }
