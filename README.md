@@ -1,80 +1,72 @@
-# Getting Started with Create React App
+# Mayank Savaliya — Portfolio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A Hogwarts-inspired personal portfolio with a live Three.js castle, changing light and seasonal weather, and a wizarding newspaper presenting real engineering work. Built with React and Vite; hosted on GitHub Pages.
 
-## Available Scripts
+## Local development
 
-In the project directory, you can run:
+Use Node.js 22.12 or newer.
 
-### `npm start`
+```sh
+npm ci
+npm run dev
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The development server runs at `http://127.0.0.1:5173`.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```sh
+npm test          # Local date, season, lighting, and preview rules
+npm run build    # Production output in build/
+npm run preview  # Serve the production build locally
+```
 
-### `npm test`
+## Content
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- `src/data/portfolio.js`: profile, four original projects, career history, combined skills, and technical project notes.
+- `public/Mayank-Savaliya-Resume.pdf`: the current downloadable Associate Tech Lead resume.
+- `src/App.jsx`: page structure, navigation, resume download, and contact links.
+- `src/styles.css`: responsive layouts, locally hosted fonts, newspaper, spellbook, and reduced-motion styles.
+- `src/lib/createWorld.js`: original procedural castle, landscape, reflective lake, weather, and camera movement.
+- `src/lib/atmosphere.js`: the calendar and lighting rules.
 
-### `npm run build`
+The four existing portfolio images are preserved without changing their files or colors: `AlmaConnect.png`, `KarmaBoxFeed.png`, `DataMine.png`, and `IITKGPStaticWebsite.png`. They load lazily and are displayed without cropping. Personal portraits and the former product-testimonial section are no longer part of the website.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## A world that follows the visitor
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The browser's **local date and time** determine the opening atmosphere. No location permission, weather service, or third-party API is needed. The calendar is a creative seasonal schedule, not a live weather forecast.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| Months            | Season                                       |
+| ----------------- | -------------------------------------------- |
+| November–February | Snow, winter foliage, and snow-covered roofs |
+| March–June        | Summer greens and drifting golden particles  |
+| July–October      | Rain, cooler light, and low mist             |
 
-### `npm run eject`
+| Local time  | Light |
+| ----------- | ----- |
+| 06:00–07:59 | Dawn  |
+| 08:00–16:59 | Day   |
+| 17:00–18:59 | Dusk  |
+| 19:00–05:59 | Night |
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The clock updates once a minute, including across midnight. The atmosphere control lets visitors preview a different light or season and pause motion. System reduced-motion preferences are respected. Manual choices last for the current page visit; refreshing returns to the clock unless preview parameters are present.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Useful preview URLs:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```text
+/?light=night&season=winter
+/?light=day&season=summer
+/?light=dusk&season=rain
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Invalid parameter values fall back to the local clock. A still CSS landscape remains visible if WebGL cannot initialize. Content, links, and the resume do not depend on the 3D scene loading.
 
-## Learn More
+## Rendering
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The 3D engine loads separately from the content. Static castle geometry is batched by material, the rendering resolution is capped, and particles are reduced on small screens. Animation pauses in hidden tabs. Reduced-motion mode shows a still scene with no particles or camera movement. All fonts and artwork are local; the architecture and scene textures are generated in code.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+The layered storytelling direction references [Kage](https://mengto.github.io/kage/). No Kage source code or artwork is included.
 
-### Code Splitting
+## Git and deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Work on a dedicated task branch. Never commit or push directly to `master`, `main`, or the default branch; submit source changes through a pull request. A pull request is not permission to merge.
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-
-Ref
-
-https://blog.logrocket.com/deploying-react-apps-github-pages/
-
-
-Deploy:
-
-npm run deploy
+The existing `npm run deploy` command builds and publishes `build/` to the `gh-pages` branch. Run it only when publication is explicitly requested. A local build does not publish the site.
