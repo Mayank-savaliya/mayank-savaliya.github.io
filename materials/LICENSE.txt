@@ -1,0 +1,6 @@
+All material maps and the HDR environment in this directory are by Poly Haven contributors and distributed under CC0 1.0 Universal.
+
+License: https://creativecommons.org/publicdomain/zero/1.0/
+Poly Haven terms: https://polyhaven.com/license
+
+These files are unmodified 1K downloads. Exact assets, authors, source URLs, and SHA-256 checksums are recorded in sources.json.

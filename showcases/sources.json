@@ -1,0 +1,148 @@
+[
+  {
+    "name": "news",
+    "url": "https://news.almaconnect.com/",
+    "title": "AlmaConnect News | AI News Alerts for Alumni & Donor Prospects",
+    "heading": "Get notified when\nprospects & alumni make news",
+    "body": "Products\nFeatures\nPlans\nContact us\nLogin\nGet A Free Demo\nGet notified when\nprospects & alumni make news\nDiscover potential donors and strengthen bonds\nGet A Free Demo\nSubscribe To Free News Alerts\nTrusted by the world\u2019s best\nHow it Works\n1. Upload li",
+    "height": 5697,
+    "loaded": 49,
+    "images": 55,
+    "captured": "2026-10-02",
+    "viewport": [
+      1280,
+      800
+    ],
+    "animation": [
+      1024,
+      640
+    ],
+    "durationSeconds": 18,
+    "method": "Browser viewport recorded during actual scrolling after font readiness, pre-scrolling to load lazy images, image decode, and a final settling delay. Eased scroll with 1.5-second holds and a reversed return. Local muted H.264 loop.",
+    "file": "news.mp4",
+    "poster": "news.jpg",
+    "fps": 12,
+    "frames": 216,
+    "sha256": "6de22eeb60785d73a784c6bf827ccd3f4b0eef4820e5d4a95b14efd7b3cc96c2"
+  },
+  {
+    "name": "data-mine",
+    "url": "https://news.almaconnect.com/data-mine",
+    "title": "DataMine \u2014 Keep Your Alumni Directory Updated | AlmaConnect News",
+    "heading": "Keep Your Alumni Directory Updated",
+    "body": "Products\nFeatures\nPlans\nContact us\nLogin\nGet A Free Demo\nKeep Your Alumni Directory Updated\nGather essential employment data and contact info of your alumni\nBook a Meeting\nHow It Works\nUpload your list of alumni or a subset of it, the one that needs ",
+    "height": 7560,
+    "loaded": 69,
+    "images": 69,
+    "captured": "2026-10-02",
+    "viewport": [
+      1280,
+      800
+    ],
+    "animation": [
+      1024,
+      640
+    ],
+    "durationSeconds": 18,
+    "method": "Browser viewport recorded during actual scrolling after font readiness, pre-scrolling to load lazy images, image decode, and a final settling delay. Eased scroll with 1.5-second holds and a reversed return. Local muted H.264 loop.",
+    "file": "data-mine.mp4",
+    "poster": "data-mine.jpg",
+    "fps": 12,
+    "frames": 216,
+    "sha256": "c504a30919d34f5a7e56c667c7c1d4c8aca727b3085e9b70e8dc9aa59a2bbd42"
+  },
+  {
+    "name": "institutions",
+    "url": "https://www.almaconnect.com/for-institutions",
+    "title": "AlmaConnect: Alumni Networking Portal helping you discover & connect with alums",
+    "body": "  AlmaConnect\n \nProducts\n Clients\n \nLogin / Signup\n \nBuild & Engage your alumni community\nAlmaconnect helps you connect with your school / college / organization\u2019s alumni network\n\nSchedule A Free Demo\nConnecting over 100,000+ alumni across 2,000+ com",
+    "height": 9107,
+    "loaded": 23,
+    "images": 23,
+    "captured": "2026-10-02",
+    "viewport": [
+      1280,
+      800
+    ],
+    "animation": [
+      1024,
+      640
+    ],
+    "durationSeconds": 18,
+    "method": "Browser viewport recorded during actual scrolling after font readiness, pre-scrolling to load lazy images, image decode, and a final settling delay. Eased scroll with 1.5-second holds and a reversed return. Local muted H.264 loop.",
+    "file": "institutions.mp4",
+    "poster": "institutions.jpg",
+    "fps": 12,
+    "frames": 216,
+    "sha256": "12cdd783254931a5911b21d7f21f01a2ec6d039c239414119d9751524554b834"
+  },
+  {
+    "name": "companies",
+    "url": "https://www.almaconnect.com/for-companies",
+    "title": "AlmaConnect: Alumni Networking Portal helping you discover & connect with alums",
+    "body": "  AlmaConnect\n \nProducts\n Clients\n \nLogin / Signup\nBuild and Engage your Corporate Alumni Community\nEngaging former employees enables organizations to expand talent pools, drive sales, and promote their brand.\nSchedule A Free Demo\nHow AlmaConnect Net",
+    "height": 8092,
+    "loaded": 26,
+    "images": 26,
+    "captured": "2026-10-02",
+    "viewport": [
+      1280,
+      800
+    ],
+    "animation": [
+      1024,
+      640
+    ],
+    "durationSeconds": 18,
+    "method": "Browser viewport recorded during actual scrolling after font readiness, pre-scrolling to load lazy images, image decode, and a final settling delay. Eased scroll with 1.5-second holds and a reversed return. Local muted H.264 loop.",
+    "file": "companies.mp4",
+    "poster": "companies.jpg",
+    "fps": 12,
+    "frames": 216,
+    "sha256": "15f0bfe85b1588fb4d115b9d5d999b2486e00d9c0364bcd36f46d8f34e6fb9d2"
+  },
+  {
+    "name": "news-portrait",
+    "url": "https://news.almaconnect.com/",
+    "title": "AlmaConnect News | AI News Alerts for Alumni & Donor Prospects",
+    "viewport": [
+      864,
+      1000
+    ],
+    "loadedImages": 39,
+    "captured": "2026-10-02T09:14:30.921Z",
+    "frames": 216,
+    "fps": 12,
+    "durationSeconds": 18,
+    "file": "news-portrait.mp4",
+    "poster": "news-portrait.jpg",
+    "animation": [
+      864,
+      1000
+    ],
+    "method": "Actual browser viewport recorded while scrolling after fonts were ready, lazy images were triggered and decoded, and a final settling delay. Captured specifically for the newspaper frame; no screenshot content cropped or recolored. 1.5-second holds, eased scroll, reverse return.",
+    "sha256": "78287590889a9c87acd81363952b4ef636a51f7e72a363e633dd2b157402d6b2"
+  },
+  {
+    "name": "data-mine-wide",
+    "url": "https://news.almaconnect.com/data-mine",
+    "title": "DataMine \u2014 Keep Your Alumni Directory Updated | AlmaConnect News",
+    "viewport": [
+      1440,
+      440
+    ],
+    "loadedImages": 31,
+    "captured": "2026-10-02T09:15:13.225Z",
+    "frames": 216,
+    "fps": 12,
+    "durationSeconds": 18,
+    "file": "data-mine-wide.mp4",
+    "poster": "data-mine-wide.jpg",
+    "animation": [
+      1296,
+      396
+    ],
+    "method": "Actual browser viewport recorded while scrolling after fonts were ready, lazy images were triggered and decoded, and a final settling delay. Captured specifically for the newspaper frame; no screenshot content cropped or recolored. 1.5-second holds, eased scroll, reverse return.",
+    "sha256": "e3b020ef76dd9ca9622a581da1894335cc635e195e933dc4b02674f58f8317ea"
+  }
+]

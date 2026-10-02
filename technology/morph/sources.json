@@ -1,0 +1,158 @@
+[
+  {
+    "name": "react",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/react.svg",
+    "license": "CC0-1.0",
+    "bytes": 2926
+  },
+  {
+    "name": "typescript",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/typescript.svg",
+    "license": "CC0-1.0",
+    "bytes": 1294
+  },
+  {
+    "name": "javascript",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/javascript.svg",
+    "license": "CC0-1.0",
+    "bytes": 974
+  },
+  {
+    "name": "ruby",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/ruby.svg",
+    "license": "CC0-1.0",
+    "bytes": 535
+  },
+  {
+    "name": "rails",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/rubyonrails.svg",
+    "license": "CC0-1.0",
+    "bytes": 1207
+  },
+  {
+    "name": "python",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/python.svg",
+    "license": "CC0-1.0",
+    "bytes": 1518
+  },
+  {
+    "name": "nextjs",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nextdotjs.svg",
+    "license": "CC0-1.0",
+    "bytes": 322
+  },
+  {
+    "name": "nodejs",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/nodedotjs.svg",
+    "license": "CC0-1.0",
+    "bytes": 1608
+  },
+  {
+    "name": "hono",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/hono.svg",
+    "license": "CC0-1.0",
+    "bytes": 762
+  },
+  {
+    "name": "angularjs",
+    "url": "https://raw.githubusercontent.com/devicons/devicon/master/icons/angularjs/angularjs-plain.svg",
+    "license": "MIT",
+    "bytes": 346
+  },
+  {
+    "name": "html5",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/html5.svg",
+    "license": "CC0-1.0",
+    "bytes": 327
+  },
+  {
+    "name": "css3",
+    "url": "https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-plain.svg",
+    "license": "MIT",
+    "bytes": 465
+  },
+  {
+    "name": "redux",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/redux.svg",
+    "license": "CC0-1.0",
+    "bytes": 1429
+  },
+  {
+    "name": "postgresql",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/postgresql.svg",
+    "license": "CC0-1.0",
+    "bytes": 5205
+  },
+  {
+    "name": "mongodb",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/mongodb.svg",
+    "license": "CC0-1.0",
+    "bytes": 527
+  },
+  {
+    "name": "redis",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/redis.svg",
+    "license": "CC0-1.0",
+    "bytes": 738
+  },
+  {
+    "name": "docker",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/docker.svg",
+    "license": "CC0-1.0",
+    "bytes": 1765
+  },
+  {
+    "name": "pytorch",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/pytorch.svg",
+    "license": "CC0-1.0",
+    "bytes": 451
+  },
+  {
+    "name": "tensorflow",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tensorflow.svg",
+    "license": "CC0-1.0",
+    "bytes": 285
+  },
+  {
+    "name": "solidity",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/solidity.svg",
+    "license": "CC0-1.0",
+    "bytes": 442
+  },
+  {
+    "name": "git",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/git.svg",
+    "license": "CC0-1.0",
+    "bytes": 426
+  },
+  {
+    "name": "elasticsearch",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/elasticsearch.svg",
+    "license": "CC0-1.0",
+    "bytes": 477
+  },
+  {
+    "name": "keras",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/keras.svg",
+    "license": "CC0-1.0",
+    "bytes": 256
+  },
+  {
+    "name": "flask",
+    "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/flask.svg",
+    "license": "CC0-1.0",
+    "bytes": 851
+  },
+  {
+    "name": "java",
+    "bytes": 1540,
+    "url": "https://raw.githubusercontent.com/devicons/devicon/master/icons/java/java-original.svg",
+    "license": "MIT"
+  },
+  {
+    "name": "amazonwebservices",
+    "bytes": 3755,
+    "url": "https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg",
+    "license": "MIT"
+  }
+]
