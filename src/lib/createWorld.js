@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { Reflector } from "three/addons/objects/Reflector.js";
 import { createJourneyArchitecture } from "./createJourneyArchitecture.js";
+import { createCastleExterior } from "./createCastleExterior.js";
+import { createHighlands } from "./createHighlands.js";
+import { createGoldenSnitch } from "./createGoldenSnitch.js";
 import { journeyPose } from "./journey.js";
 import { interiorBlend } from "./entrance.js";
 import {
@@ -12,6 +15,7 @@ import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
 import { createFloorReflection } from "./createFloorReflection.js";
 
 // An original procedural scene: every stone, spire and tree is geometry.
@@ -82,342 +86,6 @@ function batchGroup(group) {
   originalGeometries.forEach((g) => g.dispose());
 }
 
-function archShape(width, height) {
-  const shape = new THREE.Shape();
-  shape.moveTo(-width / 2, 0);
-  shape.lineTo(width / 2, 0);
-  shape.lineTo(width / 2, height * 0.64);
-  shape.quadraticCurveTo(width / 2, height * 0.87, 0, height);
-  shape.quadraticCurveTo(-width / 2, height * 0.87, -width / 2, height * 0.64);
-  shape.closePath();
-  return shape;
-}
-
-function createCastle(materials) {
-  const root = new THREE.Group();
-  root.userData.textureScale = 3;
-  const { stone, trim, roof, glass, shadow, snow } = materials;
-  const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
-  const glassGeometry = new THREE.ShapeGeometry(archShape(0.24, 0.62));
-  const frameGeometry = new THREE.ShapeGeometry(archShape(0.34, 0.74));
-  function mesh(geometry, material, x = 0, y = 0, z = 0, parent = root) {
-    const object = new THREE.Mesh(geometry, material);
-    object.position.set(x, y, z);
-    parent.add(object);
-    return object;
-  }
-  function box(x, y, z, w, h, d, material = stone, parent = root) {
-    const object = mesh(boxGeometry, material, x, y, z, parent);
-    object.scale.set(w, h, d);
-    return object;
-  }
-  function windowAt(x, y, z, rotation = 0, scale = 1) {
-    const group = new THREE.Group();
-    group.position.set(x, y, z);
-    group.rotation.y = rotation;
-    group.scale.setScalar(scale);
-    root.add(group);
-    mesh(frameGeometry, shadow, 0, -0.05, 0, group);
-    mesh(glassGeometry, glass, 0, 0, 0.014, group);
-    box(0, 0.28, 0.028, 0.023, 0.56, 0.02, trim, group);
-    box(0, 0.29, 0.029, 0.235, 0.023, 0.02, trim, group);
-  }
-  function tower(x, z, radius, height, roofHeight, base = 0, windows = true) {
-    mesh(
-      new THREE.CylinderGeometry(radius, radius * 1.055, height, 48),
-      stone,
-      x,
-      base + height / 2,
-      z,
-    );
-    [0.15, height * 0.45, height - 0.22, height].forEach((level) =>
-      mesh(
-        new THREE.CylinderGeometry(radius * 1.07, radius * 1.09, 0.12, 48),
-        trim,
-        x,
-        base + level,
-        z,
-      ),
-    );
-    const cone = mesh(
-      new THREE.ConeGeometry(radius * 1.17, roofHeight, 48, 12),
-      roof,
-      x,
-      base + height + roofHeight / 2 + 0.05,
-      z,
-    );
-    const cap = mesh(
-      cone.geometry,
-      snow,
-      x,
-      base + height + roofHeight / 2 + 0.085,
-      z,
-    );
-    cap.scale.set(1.018, 1, 1.018);
-    // Slate courses, carved corbels, and dormers break up the perfect cones.
-    for (let course = 0.12; course < roofHeight - 0.1; course += 0.2) {
-      const r = radius * 1.17 * (1 - course / roofHeight);
-      mesh(
-        new THREE.CylinderGeometry(r, r + 0.016, 0.025, 48),
-        roof,
-        x,
-        base + height + course,
-        z,
-      );
-    }
-    for (let i = 0; i < 16; i++) {
-      const a = (i * Math.PI * 2) / 16;
-      const corbel = box(
-        x + Math.sin(a) * radius * 1.03,
-        base + height - 0.28,
-        z + Math.cos(a) * radius * 1.03,
-        0.1,
-        0.3,
-        0.16,
-        trim,
-      );
-      corbel.rotation.y = a;
-    }
-    if (radius > 0.6) {
-      for (let i = 0; i < 4; i++) {
-        const a = (i * Math.PI) / 2 + 0.4;
-        windowAt(
-          x + Math.sin(a) * radius * 0.94,
-          base + height + 0.32,
-          z + Math.cos(a) * radius * 0.94,
-          a,
-          0.8,
-        );
-      }
-    }
-    mesh(
-      new THREE.CylinderGeometry(0.02, 0.035, 0.58, 5),
-      trim,
-      x,
-      base + height + roofHeight + 0.22,
-      z,
-    );
-    mesh(
-      new THREE.SphereGeometry(0.06, 6, 4),
-      trim,
-      x,
-      base + height + roofHeight + 0.44,
-      z,
-    );
-    if (windows) {
-      for (let level = 1.15; level < height - 0.8; level += 1.3) {
-        for (let i = 0; i < 7; i++) {
-          const angle = (i * Math.PI * 2) / 7;
-          windowAt(
-            x + Math.sin(angle) * (radius + 0.025),
-            base + level,
-            z + Math.cos(angle) * (radius + 0.025),
-            angle,
-            radius < 0.5 ? 0.65 : 1,
-          );
-        }
-      }
-    }
-  }
-  function pitchedRoof(x, y, z, width, depth, height) {
-    const shape = new THREE.Shape();
-    shape.moveTo(-width / 2, 0);
-    shape.lineTo(0, height);
-    shape.lineTo(width / 2, 0);
-    shape.closePath();
-    const geometry = new THREE.ExtrudeGeometry(shape, {
-      depth,
-      bevelEnabled: false,
-      steps: 1,
-    });
-    mesh(geometry, roof, x, y, z - depth / 2);
-    const cover = mesh(geometry, snow, x, y + 0.045, z - depth / 2);
-    cover.scale.set(1.02, 1, 1.005);
-    box(x, y + height, z, 0.09, 0.09, depth + 0.2, trim);
-  }
-
-  // Great Hall, its stone buttresses, lancet windows, and steep slate roof.
-  box(0, 1.85, 1.6, 3.3, 3.7, 5.5);
-  pitchedRoof(0, 3.7, 1.6, 3.65, 5.8, 2.3);
-  for (const side of [-1, 1]) {
-    for (let i = 0; i < 6; i++) {
-      const z = -0.75 + i * 0.9;
-      box(side * 1.77, 1.6, z, 0.25, 3.4, 0.2, trim);
-      box(side * 1.96, 0.62, z, 0.28, 1.24, 0.3, stone);
-      const shoulder = box(side * 1.87, 1.39, z, 0.22, 0.55, 0.28, trim);
-      shoulder.rotation.z = side * 0.27;
-      box(side * 1.77, 3.12, z, 0.33, 0.15, 0.3, trim);
-      mesh(new THREE.ConeGeometry(0.16, 0.65, 8), roof, side * 1.77, 3.65, z);
-      if (i < 5)
-        windowAt(side * 1.674, 1.3, z + 0.4, (side * Math.PI) / 2, 1.85);
-    }
-  }
-  for (const x of [-0.9, 0, 0.9]) windowAt(x, 1.75, 4.369, 0, 1.75);
-  // Traceried rose window and a deep-set entrance in the gabled end.
-  const rose = mesh(
-    new THREE.TorusGeometry(0.44, 0.055, 8, 40),
-    trim,
-    0,
-    4.24,
-    4.52,
-  );
-  mesh(new THREE.CircleGeometry(0.39, 40), glass, 0, 4.24, 4.5);
-  for (let i = 0; i < 8; i++) {
-    const a = (i * Math.PI) / 4;
-    const spoke = box(
-      Math.sin(a) * 0.2,
-      4.24 + Math.cos(a) * 0.2,
-      4.54,
-      0.027,
-      0.39,
-      0.025,
-      trim,
-    );
-    spoke.rotation.z = -a;
-  }
-  for (const side of [-1, 1]) {
-    for (let bay = 0; bay < 6; bay++) {
-      const z = -0.55 + bay * 0.91;
-      box(side * 1.7, 3.68, z, 0.3, 0.18, 0.21, trim);
-    }
-  }
-  // The central keep and astronomy spires establish the familiar silhouette.
-  tower(-1.9, -1.3, 1.17, 8.8, 3.5);
-  tower(2.3, -2.2, 0.95, 7.2, 3.4);
-  tower(-3.6, 1.1, 0.67, 5.9, 2.7);
-  tower(3.05, 1.8, 0.72, 5.3, 2.7);
-  tower(-1.9, -1.3, 0.44, 2.2, 1.75, 9.7, false);
-  // Smaller turrets sit around the main roof line.
-  [
-    [-1.6, 4.25],
-    [1.6, 4.25],
-    [-1.6, -0.95],
-    [1.6, -0.95],
-  ].forEach(([x, z]) => tower(x, z, 0.33, 3.95, 1.5, 0, false));
-  box(0.4, 2, -3.3, 5.8, 4, 2.4);
-  pitchedRoof(0.4, 4, -3.3, 6.1, 2.65, 1.8);
-  for (let x = -1.9; x <= 2.9; x += 0.8) {
-    windowAt(x, 1.0, -2.075, 0, 1.1);
-    windowAt(x, 2.65, -2.075, 0, 1);
-    windowAt(x, 1.0, -4.525, Math.PI, 1.1);
-    windowAt(x, 2.65, -4.525, Math.PI, 1);
-  }
-  tower(-3.25, -3.1, 0.51, 5.8, 2.5);
-  tower(3.7, -3.15, 0.48, 5.15, 2.6);
-  box(4.1, 1.65, -0.55, 2, 3.3, 3.0);
-  pitchedRoof(4.1, 3.3, -0.55, 2.2, 3.2, 1.9);
-  tower(5.0, 0.9, 0.43, 3.8, 2.0);
-  // A cloister and low parapet enclose the courtyard.
-  box(-3.1, 0.62, 3.2, 1.1, 1.25, 3.8);
-  box(-0.1, 0.58, 5.0, 7.0, 1.15, 0.4, trim);
-  for (let x = -3.4; x < 3.4; x += 0.42)
-    box(x, 1.28, 5.0, 0.23, 0.4, 0.43, trim);
-  box(-0.1, 1.53, 5.0, 7.0, 0.06, 0.45, snow);
-  tower(-3.6, 4.9, 0.45, 2.3, 1.8, 0, false);
-  tower(3.4, 4.9, 0.45, 2.3, 1.8, 0, false);
-  // A real, open-arched viaduct projects off the cliff into the distance.
-  for (let i = 0; i < 7; i++) {
-    const span = 1.55,
-      r = 0.57,
-      h = 3.4,
-      opening = 2.75;
-    const arch = new THREE.Shape();
-    arch.moveTo(-span / 2, h);
-    arch.lineTo(span / 2, h);
-    arch.lineTo(span / 2, 0);
-    arch.lineTo(r, 0);
-    arch.lineTo(r, opening - r);
-    arch.absarc(0, opening - r, r, 0, Math.PI, false);
-    arch.lineTo(-r, 0);
-    arch.lineTo(-span / 2, 0);
-    arch.closePath();
-    mesh(
-      new THREE.ExtrudeGeometry(arch, {
-        depth: 0.78,
-        bevelEnabled: false,
-        curveSegments: 10,
-      }),
-      stone,
-      5 + i * span,
-      -2.3,
-      -2.2,
-    );
-  }
-  box(9.6, 1.2, -1.8, 10.7, 0.25, 1.05, trim);
-  box(9.6, 1.43, -2.28, 10.7, 0.4, 0.12, stone);
-  box(9.6, 1.43, -1.31, 10.7, 0.4, 0.12, stone);
-  box(9.6, 1.65, -1.8, 10.7, 0.055, 1.05, snow);
-  batchGroup(root);
-  return root;
-}
-
-function createTrees(random, leaf, bark, snow, count, region) {
-  const trees = new THREE.Group();
-  const needles = makeTexture((ctx, size) => {
-    ctx.clearRect(0, 0, size, size);
-    for (let i = 0; i < 3200; i++) {
-      const y = random() * size;
-      const width = (1 - y / size) * size * 0.43;
-      const x = size / 2 + (random() - 0.5) * width * 2;
-      const shade = 110 + Math.floor(random() * 100);
-      ctx.strokeStyle = `rgba(${shade},${shade},${shade},.9)`;
-      ctx.lineWidth = 1 + random();
-      ctx.beginPath();
-      ctx.moveTo(x, size - y);
-      ctx.lineTo(x + (x - size / 2) * 0.12, size - y + 8 + random() * 10);
-      ctx.stroke();
-    }
-  }, 256);
-  // Alpha-tested sprays give the conifers irregular, light-catching silhouettes.
-  const foliage = leaf.clone();
-  foliage.map = needles;
-  const dust = foliage.clone();
-  dust.color.set("#b8c4c0");
-  dust.userData.seasonalSnow = true;
-  const sprayGeometry = new THREE.PlaneGeometry(1, 1);
-  for (let i = 0; i < count; i++) {
-    const x = region.x + (random() - 0.5) * region.w;
-    const z = region.z + (random() - 0.5) * region.d;
-    const height = region.h * (0.65 + random() * 0.65);
-    const y = region.y ?? -3.1;
-    const trunk = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.025, 0.11, height, 9),
-      bark,
-    );
-    trunk.position.set(x, y + height / 2, z);
-    trees.add(trunk);
-    for (let tier = 0; tier < 9; tier++) {
-      const fraction = tier / 9,
-        radius = height * (0.24 - fraction * 0.21);
-      for (let branch = 0; branch < 7; branch++) {
-        const angle = (branch * Math.PI * 2) / 7 + tier * 1.7 + random() * 0.25;
-        const spray = new THREE.Mesh(sprayGeometry, foliage);
-        spray.position.set(
-          x + Math.sin(angle) * radius * 0.5,
-          y + height * (0.2 + fraction * 0.77),
-          z + Math.cos(angle) * radius * 0.5,
-        );
-        spray.rotation.set(
-          0.12 + random() * 0.34,
-          angle,
-          (random() - 0.5) * 0.45,
-        );
-        spray.scale.set(radius * 1.6, height * 0.26, 1);
-        trees.add(spray);
-        if ((branch + tier) % 3 === 0) {
-          const patch = spray.clone();
-          patch.material = dust;
-          patch.position.y += 0.025;
-          patch.scale.multiplyScalar(0.74);
-          trees.add(patch);
-        }
-      }
-    }
-  }
-  batchGroup(trees);
-  return trees;
-}
-
 export function createWorld(host, initial) {
   const random = seededRandom();
   let state = { ...initial };
@@ -455,7 +123,7 @@ export function createWorld(host, initial) {
   host.appendChild(renderer.domElement);
   const scene = new THREE.Scene();
   scene.background = new THREE.Color("#0d1419");
-  const camera = new THREE.PerspectiveCamera(48, 1, 0.15, 600);
+  const camera = new THREE.PerspectiveCamera(48, 1, 0.15, 1300);
   scene.fog = new THREE.FogExp2("#253d46", 0.012);
   const pointer = new THREE.Vector2();
   const cameraTarget = new THREE.Vector3();
@@ -463,9 +131,11 @@ export function createWorld(host, initial) {
   const skyUniforms = {
     top: { value: new THREE.Color("#081723") },
     bottom: { value: new THREE.Color("#526671") },
+    warmth: { value: new THREE.Color("#ead7ac") },
+    daylight: { value: 1 },
   };
   const sky = new THREE.Mesh(
-    new THREE.SphereGeometry(450, 24, 16),
+    new THREE.SphereGeometry(1100, 32, 20),
     new THREE.ShaderMaterial({
       uniforms: skyUniforms,
       side: THREE.BackSide,
@@ -475,10 +145,26 @@ export function createWorld(host, initial) {
       fragmentShader: `
         uniform vec3 top;
         uniform vec3 bottom;
+        uniform vec3 warmth;
+        uniform float daylight;
         varying vec3 vPosition;
+        float hashSky(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+        float noiseSky(vec2 p) {
+          vec2 i=floor(p), f=fract(p); f=f*f*(3.-2.*f);
+          return mix(mix(hashSky(i),hashSky(i+vec2(1,0)),f.x),
+            mix(hashSky(i+vec2(0,1)),hashSky(i+vec2(1,1)),f.x),f.y);
+        }
         void main() {
-          float h = clamp((normalize(vPosition).y + 0.07) * 1.8, 0.0, 1.0);
-          gl_FragColor = vec4(mix(bottom, top, pow(h, 0.7)), 1.0);
+          vec3 direction=normalize(vPosition);
+          float h = clamp((direction.y + 0.10) * 3.4, 0.0, 1.0);
+          vec3 color=mix(bottom, top, pow(h, 0.7));
+          vec2 p=direction.xz/(max(direction.y,0.)+.3)*2.4;
+          float cloud=noiseSky(p)*.55+noiseSky(p*2.07+4.)*.27+noiseSky(p*4.17)*.13+noiseSky(p*8.31)*.05;
+          float cover=smoothstep(.38,.75,cloud)*smoothstep(-.03,.16,direction.y);
+          color=mix(color, mix(top*.72,bottom*1.1,cloud), cover*.64);
+          float glow=pow(max(0.,dot(direction,normalize(vec3(-250,118,-500)))),28.);
+          color+=warmth*glow*.34*daylight;
+          gl_FragColor = vec4(color, 1.0);
           #include <colorspace_fragment>
         }
       `,
@@ -488,22 +174,22 @@ export function createWorld(host, initial) {
   const hemisphere = new THREE.HemisphereLight("#b5ccd5", "#29363a", 1.4);
   scene.add(hemisphere);
   const sun = new THREE.DirectionalLight("#bed8f0", 2.8);
-  sun.position.set(-28, 42, 15);
-  sun.target.position.set(0, 9, -20);
+  sun.position.set(-175, 155, -180);
+  sun.target.position.set(5, 15, -59);
   scene.add(sun.target);
   sun.castShadow = true;
   sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
-  sun.shadow.camera.left = -44;
-  sun.shadow.camera.right = 44;
-  sun.shadow.camera.top = 44;
-  sun.shadow.camera.bottom = -44;
-  sun.shadow.camera.far = 130;
-  sun.shadow.normalBias = 0.035;
+  sun.shadow.camera.left = -145;
+  sun.shadow.camera.right = 145;
+  sun.shadow.camera.top = 130;
+  sun.shadow.camera.bottom = -130;
+  sun.shadow.camera.far = 430;
+  sun.shadow.normalBias = 0.075;
   sun.shadow.bias = -0.00015;
   sun.shadow.radius = 3;
   scene.add(sun);
-  const fill = new THREE.DirectionalLight("#718698", 0.18);
-  fill.position.set(20, 10, -15);
+  const fill = new THREE.DirectionalLight("#96b2bf", 0.48);
+  fill.position.set(85, 60, 90);
   scene.add(fill);
 
   const physical = createPhysicalMaterials(
@@ -560,147 +246,23 @@ export function createWorld(host, initial) {
       "#include <alphatest_fragment>",
       `
       #include <alphatest_fragment>
-      float snowCover = snowNoise(vSnowPosition * 2.5) * .65
-        + snowNoise(vSnowPosition * 6.3) * .25 + snowNoise(vSnowPosition * 15.) * .1;
+      float snowCover = snowNoise(vSnowPosition * .18) * .65
+        + snowNoise(vSnowPosition * .48) * .25 + snowNoise(vSnowPosition * 1.1) * .1;
       diffuseColor.a *= smoothstep(.28, .72, snowCover);
       if (diffuseColor.a < .025) discard;
       diffuseColor.rgb *= .88 + snowCover * .12;
     `,
     );
   };
-  const rock = new THREE.MeshStandardMaterial({
-    color: "#4c5650",
-    roughness: 1,
-    map: stone.map,
-    normalMap: stone.normalMap,
-    normalScale: new THREE.Vector2(1.8, 1.8),
+  const castle = createCastleExterior({
+    materials: { stone, trim, roof, glass, shadow, snow },
+    batchGroup,
+    mobile,
   });
-  const moss = new THREE.MeshStandardMaterial({
-    color: "#53604c",
-    roughness: 1,
-  });
-  const leaf = new THREE.MeshStandardMaterial({
-    color: "#203d34",
-    roughness: 1,
-    side: THREE.DoubleSide,
-    alphaTest: 0.4,
-  });
-  const bark = new THREE.MeshStandardMaterial({
-    color: "#344139",
-    roughness: 1,
-  });
-  const castle = createCastle({ stone, trim, roof, glass, shadow, snow });
-  const island = new THREE.Group();
-  island.name = "Distant castle keep";
-  // The distant keep sits beside the walkable hall, clear of its route.
-  island.position.set(35, 0.3, -54);
-  island.scale.setScalar(3);
-  scene.add(island);
-  island.add(castle);
-  // Irregular strata create a cliff, rather than a flat pedestal.
-  const cliffGeometry = new THREE.CylinderGeometry(6.6, 8.2, 6.5, 31, 8);
-  const cliffPositions = cliffGeometry.attributes.position;
-  for (let i = 0; i < cliffPositions.count; i++) {
-    const x = cliffPositions.getX(i),
-      z = cliffPositions.getZ(i),
-      y = cliffPositions.getY(i);
-    const factor =
-      1 + 0.1 * Math.sin(x * 1.8 + z * 0.7 + y) + 0.065 * Math.cos(z * 2 - y);
-    cliffPositions.setXYZ(
-      i,
-      x * factor,
-      y + 0.22 * Math.sin(x * 1.2 + z),
-      z * factor * 0.88,
-    );
-  }
-  cliffGeometry.computeVertexNormals();
-  const cliff = new THREE.Mesh(cliffGeometry, rock);
-  cliff.position.set(0.4, -3.18, 0.1);
-  cliff.castShadow = true;
-  cliff.receiveShadow = true;
-  island.add(cliff);
-  const grounds = new THREE.Mesh(
-    new THREE.CylinderGeometry(6.55, 6.8, 0.34, 13),
-    moss,
-  );
-  grounds.position.set(0.4, -0.1, 0.1);
-  grounds.scale.z = 0.88;
-  grounds.receiveShadow = true;
-  island.add(grounds);
-  for (let i = 0; i < 25; i++) {
-    const angle = random() * Math.PI * 2;
-    const boulder = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 1), rock);
-    boulder.position.set(
-      Math.cos(angle) * (5.6 + random() * 1.6),
-      -1.5 - random() * 3.5,
-      Math.sin(angle) * 5.5,
-    );
-    boulder.scale.set(1 + random(), 1.4 + random() * 2.1, 0.7 + random());
-    boulder.rotation.set(random(), random(), random());
-    island.add(boulder);
-  }
-  // Misty Scottish ridges, separated in depth for real camera parallax.
-  const mountains = new THREE.Group();
-  scene.add(mountains);
-  for (let layer = 0; layer < 3; layer++) {
-    const geometry = new THREE.PlaneGeometry(650, 70, 180, 28);
-    geometry.rotateX(-Math.PI / 2);
-    const vertices = geometry.attributes.position;
-    const colors = [];
-    for (let i = 0; i < vertices.count; i++) {
-      const x = vertices.getX(i),
-        z = vertices.getZ(i);
-      const ridge = Math.pow(
-        Math.abs(
-          Math.sin(x * 0.031 + layer * 1.7) + 0.34 * Math.sin(x * 0.081 + 0.6),
-        ),
-        1.5,
-      );
-      const contour = Math.max(0, 1 - Math.pow(Math.abs(z) / 35, 1.4));
-      const detail =
-        Math.sin(x * 0.24 + z * 0.15) * 0.48 +
-        Math.sin(x * 0.57 - z * 0.3) * 0.17;
-      const y = (ridge * (8 + layer * 1.5) + 2) * contour + detail - 4;
-      vertices.setY(i, y);
-      const color = new THREE.Color("#435951").lerp(
-        new THREE.Color("#6a7470"),
-        Math.max(0, y) / 25,
-      );
-      colors.push(color.r, color.g, color.b);
-    }
-    geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-    geometry.computeVertexNormals();
-    const mountain = new THREE.Mesh(
-      geometry,
-      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }),
-    );
-    mountain.position.set(layer * 13, -1, -210 - layer * 26);
-    mountains.add(mountain);
-  }
-  const northGrove = createTrees(random, leaf, bark, snow, 40, {
-    x: 28,
-    z: -18,
-    w: 24,
-    d: 12,
-    h: 5,
-  });
-  scene.add(northGrove);
-  const westGrove = createTrees(random, leaf, bark, snow, 18, {
-    x: -17,
-    z: -13,
-    w: 13,
-    d: 16,
-    h: 5,
-  });
-  scene.add(westGrove);
-  const foregroundTrees = createTrees(random, leaf, bark, snow, 11, {
-    x: 25,
-    z: 14,
-    w: 15,
-    d: 6,
-    h: 9,
-  });
-  scene.add(foregroundTrees);
+  scene.add(castle);
+  const highlands = createHighlands({ makeTexture, random, mobile });
+  scene.add(highlands.root);
+  const snitch = createGoldenSnitch({ scene, batchGroup });
 
   const lake = new Reflector(new THREE.PlaneGeometry(1000, 1000), {
     color: "#486470",
@@ -710,10 +272,10 @@ export function createWorld(host, initial) {
     clipBias: 0.003,
   });
   lake.rotation.x = -Math.PI / 2;
-  lake.position.y = -3.75;
+  lake.position.y = -26.5;
   scene.add(lake);
   lake.material.uniforms.waveTime = { value: 0 };
-  lake.material.uniforms.deepWater = { value: new THREE.Color("#345f68") };
+  lake.material.uniforms.deepWater = { value: new THREE.Color("#3b4e47") };
   lake.material.vertexShader =
     "varying vec3 lakeWorld;\n" + lake.material.vertexShader;
   lake.material.vertexShader = lake.material.vertexShader.replace(
@@ -746,7 +308,7 @@ export function createWorld(host, initial) {
     }),
   );
   lakeTint.rotation.x = -Math.PI / 2;
-  lakeTint.position.y = -3.73;
+  lakeTint.position.y = -26.48;
   scene.add(lakeTint);
   const floorReflection = createFloorReflection(
     scene,
@@ -815,11 +377,8 @@ export function createWorld(host, initial) {
     map: moonTexture,
     fog: false,
   });
-  const orb = new THREE.Mesh(
-    new THREE.SphereGeometry(2.0, 40, 28),
-    orbMaterial,
-  );
-  orb.position.set(-7, 14, -48);
+  const orb = new THREE.Mesh(new THREE.SphereGeometry(9, 40, 28), orbMaterial);
+  orb.position.set(-250, 118, -500);
   scene.add(orb);
   const halo = new THREE.Sprite(
     new THREE.SpriteMaterial({
@@ -833,7 +392,7 @@ export function createWorld(host, initial) {
     }),
   );
   halo.position.copy(orb.position);
-  halo.scale.set(23, 23, 1);
+  halo.scale.set(165, 165, 1);
   scene.add(halo);
   const starPositions = new Float32Array(420 * 3);
   for (let i = 0; i < 420; i++) {
@@ -841,7 +400,7 @@ export function createWorld(host, initial) {
       y = random() * 0.8 + 0.1,
       r = Math.sqrt(1 - y * y);
     starPositions.set(
-      [Math.cos(a) * r * 140, y * 140, Math.sin(a) * r * 140],
+      [Math.cos(a) * r * 950, y * 950, Math.sin(a) * r * 950],
       i * 3,
     );
   }
@@ -854,7 +413,7 @@ export function createWorld(host, initial) {
     starGeometry,
     new THREE.PointsMaterial({
       color: "#e9e5cd",
-      size: 0.24,
+      size: 0.8,
       transparent: true,
       opacity: 0.8,
       fog: false,
@@ -862,37 +421,6 @@ export function createWorld(host, initial) {
     }),
   );
   scene.add(stars);
-
-  const fogTexture = makeTexture((ctx, size) => {
-    const gradient = ctx.createRadialGradient(
-      size / 2,
-      size / 2,
-      0,
-      size / 2,
-      size / 2,
-      size / 2,
-    );
-    gradient.addColorStop(0, "#ffffff25");
-    gradient.addColorStop(0.45, "#ffffff16");
-    gradient.addColorStop(1, "#ffffff00");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, size, size);
-  });
-  const fogMaterial = new THREE.SpriteMaterial({
-    map: fogTexture,
-    color: "#adcbcc",
-    transparent: true,
-    opacity: 0.4,
-    depthWrite: false,
-  });
-  const mists = [];
-  for (let i = 0; i < 7; i++) {
-    const mist = new THREE.Sprite(fogMaterial);
-    mist.position.set(-16 + i * 8, -1.5 + random() * 2, 1 + random() * 15);
-    mist.scale.set(30, 6, 1);
-    scene.add(mist);
-    mists.push(mist);
-  }
 
   const particleCount = mobile ? 450 : 1000;
   const flakeTexture = makeTexture((ctx, size) => {
@@ -960,13 +488,13 @@ export function createWorld(host, initial) {
       orb: "#eee5c7",
     },
     day: {
-      top: "#729db1",
-      bottom: "#d9d9ba",
-      fog: "#a5b8b3",
-      sun: "#ffe8be",
-      ambient: 0.6,
-      direct: 3.5,
-      exposure: 1.18,
+      top: "#657d87",
+      bottom: "#d5caae",
+      fog: "#a6b2af",
+      sun: "#ffe3ad",
+      ambient: 0.48,
+      direct: 4.5,
+      exposure: 1.05,
       orb: "#fff1c5",
     },
     dawn: {
@@ -1008,8 +536,47 @@ export function createWorld(host, initial) {
   const bloom = composer
     ? new UnrealBloomPass(new THREE.Vector2(800, 600), 0.12, 0.35, 1.5)
     : null;
+  const occlusion = composer ? new GTAOPass(scene, camera, 800, 600) : null;
+  if (occlusion) {
+    occlusion.blendIntensity = 0.82;
+    occlusion.updateGtaoMaterial({
+      radius: 4,
+      thickness: 1.8,
+      distanceFallOff: 0.75,
+      samples: 12,
+    });
+    occlusion.updatePdMaterial({ samples: 8, radius: 4 });
+    // Alpha-tested foliage, mist and reflectors must not become opaque
+    // cards in the normal/depth pass. Their shading remains in the color pass.
+    const exclusions = [sky, lake, lakeTint, snitch.root];
+    scene.traverse((object) => {
+      if (
+        object.isSprite ||
+        object.isPoints ||
+        object.isLine ||
+        (object.isMesh &&
+          (object.material?.alphaTest > 0 || object.material?.transparent))
+      )
+        exclusions.push(object);
+    });
+    const renderAO = occlusion.render.bind(occlusion);
+    occlusion.render = (...args) => {
+      const saved = exclusions.map((object) => object.visible);
+      exclusions.forEach((object) => {
+        object.visible = false;
+      });
+      try {
+        renderAO(...args);
+      } finally {
+        exclusions.forEach((object, i) => {
+          object.visible = saved[i];
+        });
+      }
+    };
+  }
   if (composer) {
     composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(occlusion);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());
   }
@@ -1019,6 +586,8 @@ export function createWorld(host, initial) {
     const p = palette[state.light] || palette.night;
     skyUniforms.top.value.set(p.top);
     skyUniforms.bottom.value.set(p.bottom);
+    skyUniforms.warmth.value.set(p.orb);
+    skyUniforms.daylight.value = state.light === "night" ? 0.08 : 1;
     scene.fog.color.set(p.fog);
     scene.fog.density =
       state.season === "rain"
@@ -1029,10 +598,12 @@ export function createWorld(host, initial) {
     sun.color.set(p.sun);
     sun.intensity = p.direct;
     hemisphere.intensity = p.ambient;
+    fill.intensity =
+      state.light === "day" ? 0.48 : state.light === "night" ? 0.13 : 0.3;
     renderer.toneMappingExposure = p.exposure;
     lake.material.uniforms.deepWater.value.set(
       state.light === "day"
-        ? "#345f68"
+        ? "#3b4e47"
         : state.light === "night"
           ? "#101f2c"
           : "#294750",
@@ -1047,29 +618,15 @@ export function createWorld(host, initial) {
     }
     stars.material.opacity =
       state.light === "night" ? 0.8 : state.light === "day" ? 0 : 0.13;
-    orb.position.y = state.light === "dusk" || state.light === "dawn" ? 6 : 14;
+    orb.position.y =
+      state.light === "dusk" || state.light === "dawn" ? 65 : 118;
     halo.position.copy(orb.position);
     snow.visible = state.season === "winter";
-    [northGrove, westGrove, foregroundTrees].forEach((grove) =>
-      grove.traverse((object) => {
-        if (object.material?.userData.seasonalSnow)
-          object.visible = state.season === "winter";
-      }),
-    );
-    leaf.color.set(state.season === "summer" ? "#365742" : "#243c35");
-    moss.color.set(
-      state.season === "winter"
-        ? "#acbdb2"
-        : state.season === "summer"
-          ? "#617352"
-          : "#43594a",
-    );
     roof.roughness = state.season === "rain" ? 0.4 : 0.7;
     glass.color
-      .set(state.light === "day" ? "#84774e" : "#ffac4d")
+      .set(state.light === "day" ? "#45534f" : "#ffac4d")
       .multiplyScalar(state.light === "day" ? 0.8 : 1.25);
-    glass.emissiveIntensity = state.light === "day" ? 0.15 : 1.4;
-    fogMaterial.opacity = state.season === "summer" ? 0.18 : 0.5;
+    glass.emissiveIntensity = state.light === "day" ? 0.035 : 1.2;
     rain.visible = state.season === "rain" && !state.reducedMotion;
     particles.visible = state.season !== "rain" && !state.reducedMotion;
     particleMaterial.color.set(
@@ -1095,6 +652,7 @@ export function createWorld(host, initial) {
       height = host.clientHeight;
     renderer.setSize(width, height, false);
     composer?.setSize(width, height);
+    occlusion?.setSize(Math.round(width * 0.75), Math.round(height * 0.75));
     camera.aspect = width / height;
     camera.fov = width < 780 ? 58 : 48;
     camera.updateProjectionMatrix();
@@ -1153,7 +711,9 @@ export function createWorld(host, initial) {
     desiredLook.fromArray(pose.look);
     if (isSmall && sceneProgress < 0.23) {
       const pullback =
-        1 + 0.28 * (1 - THREE.MathUtils.smoothstep(sceneProgress, 0, 0.23));
+        1 +
+        Math.max(0, 0.84 / camera.aspect - 1) *
+          (1 - THREE.MathUtils.smoothstep(sceneProgress, 0, 0.23));
       desiredPosition
         .sub(desiredLook)
         .multiplyScalar(pullback)
@@ -1182,25 +742,24 @@ export function createWorld(host, initial) {
     floorReflection.update(sceneProgress, camera, state.season);
     sun.intensity = palette[state.light].direct * (1 - blend * 0.78);
     hemisphere.intensity = palette[state.light].ambient * (1 - blend * 0.55);
-    [
-      island,
-      mountains,
-      northGrove,
-      westGrove,
-      foregroundTrees,
-      lake,
-      lakeTint,
-      orb,
-      halo,
-      stars,
-      ...mists,
-    ].forEach((object) => {
+    [castle, lake, lakeTint, orb, halo, stars].forEach((object) => {
       object.visible = outdoors;
     });
-    // Celestial billboards sit on the horizon of the ground-level view;
-    // they must not appear as objects resting on roofs in the aerial shot.
-    orb.visible = halo.visible = outdoors && camera.position.y < 50;
-    stars.visible = outdoors && camera.position.y < 65;
+    orb.visible = halo.visible = outdoors;
+    stars.visible = outdoors;
+    highlands.update({
+      light: state.light,
+      season: state.season,
+      time: elapsed,
+      outdoors,
+      camera,
+    });
+    if (occlusion)
+      occlusion.gtaoMaterial.uniforms.radius.value = THREE.MathUtils.lerp(
+        4,
+        0.85,
+        blend,
+      );
     particles.visible =
       outdoors && state.season !== "rain" && !state.reducedMotion;
     rain.visible = outdoors && state.season === "rain" && !state.reducedMotion;
@@ -1209,7 +768,7 @@ export function createWorld(host, initial) {
     scene.fog.density = THREE.MathUtils.lerp(
       THREE.MathUtils.lerp(
         state.season === "rain" ? 0.0065 : 0.0035,
-        state.season === "rain" ? 0.0025 : 0.0012,
+        state.season === "rain" ? 0.0021 : 0.00095,
         aerial,
       ),
       0.014,
@@ -1224,6 +783,14 @@ export function createWorld(host, initial) {
       reducedMotion: state.reducedMotion,
       light: state.light,
       season: state.season,
+      exploring: state.route?.current.exploring,
+    });
+    snitch.update({
+      camera,
+      time: elapsed,
+      delta,
+      progress: sceneProgress,
+      reducedMotion: state.reducedMotion,
       exploring: state.route?.current.exploring,
     });
     host.dataset.journey = progress.toFixed(3);
@@ -1262,9 +829,6 @@ export function createWorld(host, initial) {
       }
       particleGeometry.attributes.position.needsUpdate = true;
       if (rain.visible) rainGeometry.attributes.position.needsUpdate = true;
-      mists.forEach((mist, index) => {
-        mist.position.x += Math.sin(elapsed * 0.07 + index) * delta * 0.13;
-      });
     }
     if (composer) composer.render(delta);
     else renderer.render(scene, camera);
@@ -1298,12 +862,7 @@ export function createWorld(host, initial) {
       renderer.domElement.removeEventListener("webglcontextlost", onLost);
       const geometries = new Set(),
         materials = new Set(),
-        textures = new Set([
-          glowTexture,
-          fogTexture,
-          flakeTexture,
-          moonTexture,
-        ]);
+        textures = new Set([glowTexture, flakeTexture, moonTexture]);
       scene.traverse((object) => {
         if (object.geometry) geometries.add(object.geometry);
         if (object.material) materials.add(object.material);

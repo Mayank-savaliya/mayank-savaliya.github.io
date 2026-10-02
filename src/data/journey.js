@@ -6,8 +6,8 @@ export const journeyStops = [
     subject: "Introduction",
     title: "Every good story starts with a little curiosity.",
     note: "I’m Mayank. Engineer by trade, curious by nature. Step through the gates — there’s real work behind the magic.",
-    camera: [84, 178, 114],
-    look: [12, 0, -48],
+    camera: [-134, 114, 228],
+    look: [-35, -12, -65],
   },
   {
     id: "transfiguration",
@@ -70,7 +70,7 @@ export const journeyStops = [
 // Ground height is sampled from the same staircase used by the geometry.
 export const approachWaypoints = [
   { at: 0, ...journeyStops[0] },
-  { at: 0.08, camera: [45, 72, 89], look: [9, 7, -25] },
+  { at: 0.08, camera: [-54, 62, 126], look: [5, 15, -33] },
   { at: 0.15, camera: [8, 9, 61], look: [0, 4, 0] },
   {
     at: 0.23,
