@@ -1,6 +1,18 @@
 import * as THREE from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 import { Reflector } from "three/addons/objects/Reflector.js";
+import { createJourneyArchitecture } from "./createJourneyArchitecture.js";
+import { journeyPose } from "./journey.js";
+import { interiorBlend } from "./entrance.js";
+import {
+  createPhysicalMaterials,
+  projectSurfaceUVs,
+} from "./physicalMaterials.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { createFloorReflection } from "./createFloorReflection.js";
 
 // An original procedural scene: every stone, spire and tree is geometry.
 // Static architecture is batched by material to keep the draw-call count small.
@@ -20,51 +32,48 @@ function makeTexture(draw, size = 256) {
   return texture;
 }
 
-function stoneTexture(random) {
-  const texture = makeTexture((ctx, size) => {
-    ctx.fillStyle = "#817e70";
-    ctx.fillRect(0, 0, size, size);
-    const row = 16;
-    for (let y = 0; y < size; y += row) {
-      for (let x = -32; x < size; x += 32) {
-        const light = 57 + random() * 17;
-        ctx.fillStyle = `hsl(42 12% ${light}%)`;
-        ctx.fillRect(x + ((y / row) % 2) * 16 + 1, y + 1, 30, row - 2);
-      }
-    }
-    for (let i = 0; i < 15000; i++) {
-      ctx.fillStyle = random() > 0.5 ? "#ffffff0a" : "#0000000c";
-      ctx.fillRect(random() * size, random() * size, 1, 1);
-    }
-  });
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(2, 3);
-  return texture;
-}
-
 function batchGroup(group) {
   group.updateMatrixWorld(true);
   const batches = new Map();
   const inverse = group.matrixWorld.clone().invert();
   const originalGeometries = new Set();
+  const preserved = [];
   group.traverse((child) => {
+    if (child.isSprite || child.isLight) {
+      preserved.push([child, inverse.clone().multiply(child.matrixWorld)]);
+      return;
+    }
     if (!child.isMesh || Array.isArray(child.material)) return;
-    const geometry = child.geometry
-      .clone()
-      .applyMatrix4(inverse.clone().multiply(child.matrixWorld));
+    const geometry = (
+      child.geometry.index
+        ? child.geometry.toNonIndexed()
+        : child.geometry.clone()
+    ).applyMatrix4(inverse.clone().multiply(child.matrixWorld));
+    projectSurfaceUVs(
+      geometry,
+      child.material,
+      group.userData.textureScale || 1,
+    );
     const list = batches.get(child.material) || [];
     list.push(geometry);
     batches.set(child.material, list);
     originalGeometries.add(child.geometry);
   });
   group.clear();
+  for (const [object, matrix] of preserved) {
+    matrix.decompose(object.position, object.quaternion, object.scale);
+    group.add(object);
+  }
   for (const [material, geometries] of batches) {
     const geometry = mergeGeometries(
       geometries.map((g) => (g.index ? g.toNonIndexed() : g)),
     );
     if (geometry) {
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.castShadow = !material.isMeshBasicMaterial;
+      mesh.castShadow =
+        !material.isMeshBasicMaterial &&
+        !(material.transmission > 0) &&
+        !material.userData.noShadow;
       mesh.receiveShadow = true;
       group.add(mesh);
     }
@@ -86,6 +95,7 @@ function archShape(width, height) {
 
 function createCastle(materials) {
   const root = new THREE.Group();
+  root.userData.textureScale = 3;
   const { stone, trim, roof, glass, shadow, snow } = materials;
   const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
   const glassGeometry = new THREE.ShapeGeometry(archShape(0.24, 0.62));
@@ -114,7 +124,7 @@ function createCastle(materials) {
   }
   function tower(x, z, radius, height, roofHeight, base = 0, windows = true) {
     mesh(
-      new THREE.CylinderGeometry(radius, radius * 1.08, height, 16),
+      new THREE.CylinderGeometry(radius, radius * 1.055, height, 48),
       stone,
       x,
       base + height / 2,
@@ -122,7 +132,7 @@ function createCastle(materials) {
     );
     [0.15, height * 0.45, height - 0.22, height].forEach((level) =>
       mesh(
-        new THREE.CylinderGeometry(radius * 1.12, radius * 1.12, 0.12, 16),
+        new THREE.CylinderGeometry(radius * 1.07, radius * 1.09, 0.12, 48),
         trim,
         x,
         base + level,
@@ -130,7 +140,7 @@ function createCastle(materials) {
       ),
     );
     const cone = mesh(
-      new THREE.ConeGeometry(radius * 1.25, roofHeight, 16),
+      new THREE.ConeGeometry(radius * 1.17, roofHeight, 48, 12),
       roof,
       x,
       base + height + roofHeight / 2 + 0.05,
@@ -144,6 +154,42 @@ function createCastle(materials) {
       z,
     );
     cap.scale.set(1.018, 1, 1.018);
+    // Slate courses, carved corbels, and dormers break up the perfect cones.
+    for (let course = 0.12; course < roofHeight - 0.1; course += 0.2) {
+      const r = radius * 1.17 * (1 - course / roofHeight);
+      mesh(
+        new THREE.CylinderGeometry(r, r + 0.016, 0.025, 48),
+        roof,
+        x,
+        base + height + course,
+        z,
+      );
+    }
+    for (let i = 0; i < 16; i++) {
+      const a = (i * Math.PI * 2) / 16;
+      const corbel = box(
+        x + Math.sin(a) * radius * 1.03,
+        base + height - 0.28,
+        z + Math.cos(a) * radius * 1.03,
+        0.1,
+        0.3,
+        0.16,
+        trim,
+      );
+      corbel.rotation.y = a;
+    }
+    if (radius > 0.6) {
+      for (let i = 0; i < 4; i++) {
+        const a = (i * Math.PI) / 2 + 0.4;
+        windowAt(
+          x + Math.sin(a) * radius * 0.94,
+          base + height + 0.32,
+          z + Math.cos(a) * radius * 0.94,
+          a,
+          0.8,
+        );
+      }
+    }
     mesh(
       new THREE.CylinderGeometry(0.02, 0.035, 0.58, 5),
       trim,
@@ -197,11 +243,44 @@ function createCastle(materials) {
     for (let i = 0; i < 6; i++) {
       const z = -0.75 + i * 0.9;
       box(side * 1.77, 1.6, z, 0.25, 3.4, 0.2, trim);
+      box(side * 1.96, 0.62, z, 0.28, 1.24, 0.3, stone);
+      const shoulder = box(side * 1.87, 1.39, z, 0.22, 0.55, 0.28, trim);
+      shoulder.rotation.z = side * 0.27;
+      box(side * 1.77, 3.12, z, 0.33, 0.15, 0.3, trim);
+      mesh(new THREE.ConeGeometry(0.16, 0.65, 8), roof, side * 1.77, 3.65, z);
       if (i < 5)
         windowAt(side * 1.674, 1.3, z + 0.4, (side * Math.PI) / 2, 1.85);
     }
   }
   for (const x of [-0.9, 0, 0.9]) windowAt(x, 1.75, 4.369, 0, 1.75);
+  // Traceried rose window and a deep-set entrance in the gabled end.
+  const rose = mesh(
+    new THREE.TorusGeometry(0.44, 0.055, 8, 40),
+    trim,
+    0,
+    4.24,
+    4.52,
+  );
+  mesh(new THREE.CircleGeometry(0.39, 40), glass, 0, 4.24, 4.5);
+  for (let i = 0; i < 8; i++) {
+    const a = (i * Math.PI) / 4;
+    const spoke = box(
+      Math.sin(a) * 0.2,
+      4.24 + Math.cos(a) * 0.2,
+      4.54,
+      0.027,
+      0.39,
+      0.025,
+      trim,
+    );
+    spoke.rotation.z = -a;
+  }
+  for (const side of [-1, 1]) {
+    for (let bay = 0; bay < 6; bay++) {
+      const z = -0.55 + bay * 0.91;
+      box(side * 1.7, 3.68, z, 0.3, 0.18, 0.21, trim);
+    }
+  }
   // The central keep and astronomy spires establish the familiar silhouette.
   tower(-1.9, -1.3, 1.17, 8.8, 3.5);
   tower(2.3, -2.2, 0.95, 7.2, 3.4);
@@ -274,29 +353,65 @@ function createCastle(materials) {
 
 function createTrees(random, leaf, bark, snow, count, region) {
   const trees = new THREE.Group();
+  const needles = makeTexture((ctx, size) => {
+    ctx.clearRect(0, 0, size, size);
+    for (let i = 0; i < 3200; i++) {
+      const y = random() * size;
+      const width = (1 - y / size) * size * 0.43;
+      const x = size / 2 + (random() - 0.5) * width * 2;
+      const shade = 110 + Math.floor(random() * 100);
+      ctx.strokeStyle = `rgba(${shade},${shade},${shade},.9)`;
+      ctx.lineWidth = 1 + random();
+      ctx.beginPath();
+      ctx.moveTo(x, size - y);
+      ctx.lineTo(x + (x - size / 2) * 0.12, size - y + 8 + random() * 10);
+      ctx.stroke();
+    }
+  }, 256);
+  // Alpha-tested sprays give the conifers irregular, light-catching silhouettes.
+  const foliage = leaf.clone();
+  foliage.map = needles;
+  const dust = foliage.clone();
+  dust.color.set("#b8c4c0");
+  dust.userData.seasonalSnow = true;
+  const sprayGeometry = new THREE.PlaneGeometry(1, 1);
   for (let i = 0; i < count; i++) {
     const x = region.x + (random() - 0.5) * region.w;
     const z = region.z + (random() - 0.5) * region.d;
     const height = region.h * (0.65 + random() * 0.65);
     const y = region.y ?? -3.1;
     const trunk = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.07, 0.13, height * 0.75, 5),
+      new THREE.CylinderGeometry(0.025, 0.11, height, 9),
       bark,
     );
-    trunk.position.set(x, y + height * 0.37, z);
+    trunk.position.set(x, y + height / 2, z);
     trees.add(trunk);
-    for (let layer = 0; layer < 4; layer++) {
-      const radius = height * (0.26 - layer * 0.043);
-      const shape = new THREE.ConeGeometry(radius, height * 0.48, 7);
-      const part = new THREE.Mesh(shape, leaf);
-      part.position.set(x, y + height * (0.37 + layer * 0.17), z);
-      part.rotation.y = random() * 6;
-      trees.add(part);
-      const dust = new THREE.Mesh(shape, snow);
-      dust.position.copy(part.position).add(new THREE.Vector3(0, 0.1, 0));
-      dust.rotation.copy(part.rotation);
-      dust.scale.set(0.9, 0.86, 0.9);
-      trees.add(dust);
+    for (let tier = 0; tier < 9; tier++) {
+      const fraction = tier / 9,
+        radius = height * (0.24 - fraction * 0.21);
+      for (let branch = 0; branch < 7; branch++) {
+        const angle = (branch * Math.PI * 2) / 7 + tier * 1.7 + random() * 0.25;
+        const spray = new THREE.Mesh(sprayGeometry, foliage);
+        spray.position.set(
+          x + Math.sin(angle) * radius * 0.5,
+          y + height * (0.2 + fraction * 0.77),
+          z + Math.cos(angle) * radius * 0.5,
+        );
+        spray.rotation.set(
+          0.12 + random() * 0.34,
+          angle,
+          (random() - 0.5) * 0.45,
+        );
+        spray.scale.set(radius * 1.6, height * 0.26, 1);
+        trees.add(spray);
+        if ((branch + tier) % 3 === 0) {
+          const patch = spray.clone();
+          patch.material = dust;
+          patch.position.y += 0.025;
+          patch.scale.multiplyScalar(0.74);
+          trees.add(patch);
+        }
+      }
     }
   }
   batchGroup(trees);
@@ -310,6 +425,20 @@ export function createWorld(host, initial) {
     frame = 0,
     dirty = true,
     visible = true;
+  let assetsReady = false,
+    readySent = false,
+    resolveReady;
+  const ready = new Promise((resolve) => {
+    resolveReady = resolve;
+  });
+  const loadingManager = new THREE.LoadingManager();
+  loadingManager.onProgress = (_url, loaded, total) => {
+    if (!disposed) initial.onProgress?.(loaded / total);
+  };
+  loadingManager.onLoad = () => {
+    assetsReady = true;
+    dirty = true;
+  };
   const mobile = window.innerWidth < 780;
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
@@ -320,20 +449,23 @@ export function createWorld(host, initial) {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
-  renderer.shadowMap.enabled = !mobile;
+  renderer.transmissionResolutionScale = mobile ? 0.4 : 0.6;
+  renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap;
   host.appendChild(renderer.domElement);
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(41, 1, 0.5, 230);
+  scene.background = new THREE.Color("#0d1419");
+  const camera = new THREE.PerspectiveCamera(48, 1, 0.15, 600);
   scene.fog = new THREE.FogExp2("#253d46", 0.012);
   const pointer = new THREE.Vector2();
   const cameraTarget = new THREE.Vector3();
+  const interiorFog = new THREE.Color("#162226");
   const skyUniforms = {
     top: { value: new THREE.Color("#081723") },
     bottom: { value: new THREE.Color("#526671") },
   };
   const sky = new THREE.Mesh(
-    new THREE.SphereGeometry(180, 24, 16),
+    new THREE.SphereGeometry(450, 24, 16),
     new THREE.ShaderMaterial({
       uniforms: skyUniforms,
       side: THREE.BackSide,
@@ -356,38 +488,37 @@ export function createWorld(host, initial) {
   const hemisphere = new THREE.HemisphereLight("#b5ccd5", "#29363a", 1.4);
   scene.add(hemisphere);
   const sun = new THREE.DirectionalLight("#bed8f0", 2.8);
-  sun.position.set(-15, 28, 18);
-  sun.castShadow = !mobile;
-  sun.shadow.mapSize.set(1024, 1024);
-  sun.shadow.camera.left = -25;
-  sun.shadow.camera.right = 25;
-  sun.shadow.camera.top = 25;
-  sun.shadow.camera.bottom = -25;
-  sun.shadow.normalBias = 0.12;
+  sun.position.set(-28, 42, 15);
+  sun.target.position.set(0, 9, -20);
+  scene.add(sun.target);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
+  sun.shadow.camera.left = -44;
+  sun.shadow.camera.right = 44;
+  sun.shadow.camera.top = 44;
+  sun.shadow.camera.bottom = -44;
+  sun.shadow.camera.far = 130;
+  sun.shadow.normalBias = 0.035;
+  sun.shadow.bias = -0.00015;
+  sun.shadow.radius = 3;
   scene.add(sun);
-  const fill = new THREE.DirectionalLight("#718698", 0.6);
+  const fill = new THREE.DirectionalLight("#718698", 0.18);
   fill.position.set(20, 10, -15);
   scene.add(fill);
 
-  const stoneMap = stoneTexture(random);
-  const stone = new THREE.MeshStandardMaterial({
-    color: "#c5c0aa",
-    map: stoneMap,
-    bumpMap: stoneMap,
-    bumpScale: 0.055,
-    roughness: 0.93,
-  });
-  const trim = new THREE.MeshStandardMaterial({
-    color: "#a5a99a",
-    roughness: 0.88,
-  });
-  const roof = new THREE.MeshStandardMaterial({
-    color: "#354852",
-    roughness: 0.67,
-    metalness: 0.12,
-  });
-  const glass = new THREE.MeshBasicMaterial({
-    color: new THREE.Color("#ffbc67").multiplyScalar(1.55),
+  const physical = createPhysicalMaterials(
+    renderer,
+    () => {
+      dirty = true;
+    },
+    loadingManager,
+  );
+  const { stone, trim, roof } = physical;
+  const glass = new THREE.MeshStandardMaterial({
+    color: "#ae9771",
+    emissive: "#ffae53",
+    emissiveIntensity: 1.4,
+    roughness: 0.22,
     side: THREE.DoubleSide,
   });
   const shadow = new THREE.MeshStandardMaterial({
@@ -397,24 +528,62 @@ export function createWorld(host, initial) {
   });
   const snow = new THREE.MeshStandardMaterial({
     color: "#e0e7e3",
+    normalMap: roof.normalMap,
+    normalScale: new THREE.Vector2(0.45, 0.45),
     roughness: 0.92,
+    transparent: true,
+    depthWrite: false,
     polygonOffset: true,
     polygonOffsetFactor: -1,
   });
+  snow.userData.textureSize = 3;
+  snow.userData.noShadow = true;
+  snow.onBeforeCompile = (shader) => {
+    shader.vertexShader = "varying vec3 vSnowPosition;\n" + shader.vertexShader;
+    shader.vertexShader = shader.vertexShader.replace(
+      "#include <begin_vertex>",
+      "#include <begin_vertex>\nvSnowPosition = position;",
+    );
+    shader.fragmentShader =
+      `
+      varying vec3 vSnowPosition;
+      float snowHash(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
+      float snowNoise(vec3 p) {
+        vec3 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
+        return mix(mix(mix(snowHash(i), snowHash(i+vec3(1,0,0)), f.x),
+          mix(snowHash(i+vec3(0,1,0)), snowHash(i+vec3(1,1,0)), f.x), f.y),
+          mix(mix(snowHash(i+vec3(0,0,1)), snowHash(i+vec3(1,0,1)), f.x),
+          mix(snowHash(i+vec3(0,1,1)), snowHash(i+vec3(1,1,1)), f.x), f.y), f.z);
+      }
+    ` + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace(
+      "#include <alphatest_fragment>",
+      `
+      #include <alphatest_fragment>
+      float snowCover = snowNoise(vSnowPosition * 2.5) * .65
+        + snowNoise(vSnowPosition * 6.3) * .25 + snowNoise(vSnowPosition * 15.) * .1;
+      diffuseColor.a *= smoothstep(.28, .72, snowCover);
+      if (diffuseColor.a < .025) discard;
+      diffuseColor.rgb *= .88 + snowCover * .12;
+    `,
+    );
+  };
   const rock = new THREE.MeshStandardMaterial({
     color: "#4c5650",
     roughness: 1,
-    flatShading: true,
+    map: stone.map,
+    normalMap: stone.normalMap,
+    normalScale: new THREE.Vector2(1.8, 1.8),
   });
   const moss = new THREE.MeshStandardMaterial({
     color: "#53604c",
     roughness: 1,
-    flatShading: true,
   });
   const leaf = new THREE.MeshStandardMaterial({
     color: "#203d34",
     roughness: 1,
-    flatShading: true,
+    side: THREE.DoubleSide,
+    alphaTest: 0.4,
   });
   const bark = new THREE.MeshStandardMaterial({
     color: "#344139",
@@ -422,7 +591,10 @@ export function createWorld(host, initial) {
   });
   const castle = createCastle({ stone, trim, roof, glass, shadow, snow });
   const island = new THREE.Group();
-  island.position.set(7, 1.2, -1);
+  island.name = "Distant castle keep";
+  // The distant keep sits beside the walkable hall, clear of its route.
+  island.position.set(35, 0.3, -54);
+  island.scale.setScalar(3);
   scene.add(island);
   island.add(castle);
   // Irregular strata create a cliff, rather than a flat pedestal.
@@ -471,7 +643,7 @@ export function createWorld(host, initial) {
   const mountains = new THREE.Group();
   scene.add(mountains);
   for (let layer = 0; layer < 3; layer++) {
-    const geometry = new THREE.PlaneGeometry(240, 40, 140, 22);
+    const geometry = new THREE.PlaneGeometry(650, 70, 180, 28);
     geometry.rotateX(-Math.PI / 2);
     const vertices = geometry.attributes.position;
     const colors = [];
@@ -484,7 +656,7 @@ export function createWorld(host, initial) {
         ),
         1.5,
       );
-      const contour = 1 - Math.pow(Math.abs(z) / 23, 1.4);
+      const contour = Math.max(0, 1 - Math.pow(Math.abs(z) / 35, 1.4));
       const detail =
         Math.sin(x * 0.24 + z * 0.15) * 0.48 +
         Math.sin(x * 0.57 - z * 0.3) * 0.17;
@@ -502,27 +674,25 @@ export function createWorld(host, initial) {
       geometry,
       new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1 }),
     );
-    mountain.position.set(layer * 13, -1, -40 - layer * 26);
+    mountain.position.set(layer * 13, -1, -210 - layer * 26);
     mountains.add(mountain);
   }
-  scene.add(
-    createTrees(random, leaf, bark, snow, 40, {
-      x: 28,
-      z: -18,
-      w: 24,
-      d: 12,
-      h: 5,
-    }),
-  );
-  scene.add(
-    createTrees(random, leaf, bark, snow, 18, {
-      x: -17,
-      z: -13,
-      w: 13,
-      d: 16,
-      h: 5,
-    }),
-  );
+  const northGrove = createTrees(random, leaf, bark, snow, 40, {
+    x: 28,
+    z: -18,
+    w: 24,
+    d: 12,
+    h: 5,
+  });
+  scene.add(northGrove);
+  const westGrove = createTrees(random, leaf, bark, snow, 18, {
+    x: -17,
+    z: -13,
+    w: 13,
+    d: 16,
+    h: 5,
+  });
+  scene.add(westGrove);
   const foregroundTrees = createTrees(random, leaf, bark, snow, 11, {
     x: 25,
     z: 14,
@@ -532,7 +702,7 @@ export function createWorld(host, initial) {
   });
   scene.add(foregroundTrees);
 
-  const lake = new Reflector(new THREE.PlaneGeometry(230, 230), {
+  const lake = new Reflector(new THREE.PlaneGeometry(1000, 1000), {
     color: "#486470",
     textureWidth: mobile ? 384 : 768,
     textureHeight: mobile ? 384 : 768,
@@ -543,14 +713,31 @@ export function createWorld(host, initial) {
   lake.position.y = -3.75;
   scene.add(lake);
   lake.material.uniforms.waveTime = { value: 0 };
+  lake.material.uniforms.deepWater = { value: new THREE.Color("#345f68") };
+  lake.material.vertexShader =
+    "varying vec3 lakeWorld;\n" + lake.material.vertexShader;
+  lake.material.vertexShader = lake.material.vertexShader.replace(
+    "void main() {",
+    "void main() { lakeWorld = (modelMatrix * vec4(position, 1.)).xyz;",
+  );
   lake.material.fragmentShader = lake.material.fragmentShader
-    .replace("void main() {", "uniform float waveTime;\nvoid main() {")
+    .replace(
+      "void main() {",
+      "uniform float waveTime;\nuniform vec3 deepWater;\nvarying vec3 lakeWorld;\nvoid main() {",
+    )
     .replace(
       "texture2DProj( tDiffuse, vUv )",
       "texture2DProj( tDiffuse, vUv + vec4(sin(vUv.y * 160.0 + waveTime * 0.4) * 0.002 * vUv.w, cos(vUv.x * 110.0 + waveTime * 0.3) * 0.001 * vUv.w, 0.0, 0.0) )",
+    )
+    .replace(
+      "gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );",
+      `float angle = 1. - abs(normalize(cameraPosition - lakeWorld).y);
+       float fresnel = .02 + .98 * pow(angle, 5.);
+       vec3 reflected = blendOverlay(base.rgb, color);
+       gl_FragColor = vec4(mix(deepWater, reflected, .08 + fresnel * .84), 1.);`,
     );
   const lakeTint = new THREE.Mesh(
-    new THREE.PlaneGeometry(230, 230),
+    new THREE.PlaneGeometry(1000, 1000),
     new THREE.MeshBasicMaterial({
       color: "#1e3942",
       transparent: true,
@@ -561,6 +748,27 @@ export function createWorld(host, initial) {
   lakeTint.rotation.x = -Math.PI / 2;
   lakeTint.position.y = -3.73;
   scene.add(lakeTint);
+  const floorReflection = createFloorReflection(
+    scene,
+    physical.floor.normalMap,
+    mobile,
+  );
+  // Never recursively render two planar reflectors into one another.
+  const reflectors = [lake, floorReflection.mirror];
+  reflectors.forEach((mirror) => {
+    const renderReflection = mirror.onBeforeRender;
+    mirror.onBeforeRender = function (...args) {
+      const others = reflectors.filter((object) => object !== mirror);
+      const visibility = others.map((object) => object.visible);
+      others.forEach((object) => {
+        object.visible = false;
+      });
+      renderReflection.apply(this, args);
+      others.forEach((object, index) => {
+        object.visible = visibility[index];
+      });
+    };
+  });
 
   const glowTexture = makeTexture((ctx, size) => {
     const gradient = ctx.createRadialGradient(
@@ -746,9 +954,9 @@ export function createWorld(host, initial) {
       bottom: "#445e68",
       fog: "#2e4852",
       sun: "#b4cddd",
-      ambient: 1.25,
-      direct: 2.3,
-      exposure: 1.15,
+      ambient: 0.32,
+      direct: 2.6,
+      exposure: 1.08,
       orb: "#eee5c7",
     },
     day: {
@@ -756,7 +964,7 @@ export function createWorld(host, initial) {
       bottom: "#d9d9ba",
       fog: "#a5b8b3",
       sun: "#ffe8be",
-      ambient: 2.6,
+      ambient: 0.6,
       direct: 3.5,
       exposure: 1.18,
       orb: "#fff1c5",
@@ -766,7 +974,7 @@ export function createWorld(host, initial) {
       bottom: "#d1ae94",
       fog: "#788b8e",
       sun: "#ffceb0",
-      ambient: 1.8,
+      ambient: 0.42,
       direct: 2.9,
       exposure: 1.15,
       orb: "#ffe5bb",
@@ -776,12 +984,35 @@ export function createWorld(host, initial) {
       bottom: "#be997f",
       fog: "#6c7d80",
       sun: "#ffcc90",
-      ambient: 1.7,
+      ambient: 0.38,
       direct: 3.1,
       exposure: 1.1,
       orb: "#ffd195",
     },
   };
+
+  const journey = createJourneyArchitecture({
+    scene,
+    materials: { stone, trim, roof, glass, shadow },
+    random,
+    makeTexture,
+    batchGroup,
+    glowTexture,
+    physical,
+    loadingManager,
+    invalidate: () => {
+      dirty = true;
+    },
+  });
+  const composer = mobile ? null : new EffectComposer(renderer);
+  const bloom = composer
+    ? new UnrealBloomPass(new THREE.Vector2(800, 600), 0.12, 0.35, 1.5)
+    : null;
+  if (composer) {
+    composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(bloom);
+    composer.addPass(new OutputPass());
+  }
 
   function update(next) {
     state = { ...next };
@@ -799,6 +1030,13 @@ export function createWorld(host, initial) {
     sun.intensity = p.direct;
     hemisphere.intensity = p.ambient;
     renderer.toneMappingExposure = p.exposure;
+    lake.material.uniforms.deepWater.value.set(
+      state.light === "day"
+        ? "#345f68"
+        : state.light === "night"
+          ? "#101f2c"
+          : "#294750",
+    );
     orbMaterial.color.set(p.orb);
     halo.material.color.set(p.orb);
     halo.material.opacity = state.light === "day" ? 0.55 : 0.33;
@@ -812,6 +1050,12 @@ export function createWorld(host, initial) {
     orb.position.y = state.light === "dusk" || state.light === "dawn" ? 6 : 14;
     halo.position.copy(orb.position);
     snow.visible = state.season === "winter";
+    [northGrove, westGrove, foregroundTrees].forEach((grove) =>
+      grove.traverse((object) => {
+        if (object.material?.userData.seasonalSnow)
+          object.visible = state.season === "winter";
+      }),
+    );
     leaf.color.set(state.season === "summer" ? "#365742" : "#243c35");
     moss.color.set(
       state.season === "winter"
@@ -824,6 +1068,7 @@ export function createWorld(host, initial) {
     glass.color
       .set(state.light === "day" ? "#84774e" : "#ffac4d")
       .multiplyScalar(state.light === "day" ? 0.8 : 1.25);
+    glass.emissiveIntensity = state.light === "day" ? 0.15 : 1.4;
     fogMaterial.opacity = state.season === "summer" ? 0.18 : 0.5;
     rain.visible = state.season === "rain" && !state.reducedMotion;
     particles.visible = state.season !== "rain" && !state.reducedMotion;
@@ -849,8 +1094,9 @@ export function createWorld(host, initial) {
     const width = host.clientWidth,
       height = host.clientHeight;
     renderer.setSize(width, height, false);
+    composer?.setSize(width, height);
     camera.aspect = width / height;
-    camera.fov = width < 780 ? 49 : 41;
+    camera.fov = width < 780 ? 58 : 48;
     camera.updateProjectionMatrix();
     dirty = true;
   }
@@ -866,10 +1112,12 @@ export function createWorld(host, initial) {
   };
   const onVisibility = () => {
     visible = !document.hidden;
+    if (!visible) journey.pauseMedia();
     dirty = true;
   };
   const onLost = (event) => {
     event.preventDefault();
+    journey.pauseMedia();
     visible = false;
     host.parentElement.classList.remove("world--ready");
   };
@@ -881,34 +1129,106 @@ export function createWorld(host, initial) {
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(host);
   let last = 0,
-    elapsed = 0;
+    elapsed = 0,
+    lastProgress = -1,
+    firstFrame = true;
+  const desiredPosition = new THREE.Vector3();
+  const desiredLook = new THREE.Vector3();
   function draw(time) {
     if (disposed) return;
     frame = requestAnimationFrame(draw);
     if (!visible || time - last < (mobile ? 1000 / 30 : 1000 / 45)) return;
     const delta = Math.min((time - last) / 1000 || 0.016, 0.05);
     last = time;
+    const progress = state.route?.current.progress || 0;
+    if (progress !== lastProgress) dirty = true;
     if (state.reducedMotion && !dirty) return;
     if (!state.reducedMotion) elapsed += delta;
-    const progress = state.reducedMotion
-      ? 0
-      : Math.min(window.scrollY / (innerHeight * 2.5), 1);
+    const sceneProgress = state.reducedMotion ? Math.round(progress) : progress;
+    const pose = journeyPose(sceneProgress, state.reducedMotion);
     const isSmall = window.innerWidth < 780;
     const px = state.reducedMotion ? 0 : pointer.x,
       py = state.reducedMotion ? 0 : pointer.y;
-    cameraTarget.set(
-      isSmall ? 2.5 : -0.5 + progress * 2,
-      (isSmall ? 8.5 : 4.8) + progress * 0.8,
-      -1,
-    );
-    const position = new THREE.Vector3(
-      22 - progress * 2.5 + px * 0.8,
-      (isSmall ? 14 : 13.5) + progress - py * 0.45,
-      (isSmall ? 39 : 36) - progress * 4,
-    );
-    if (dirty && last < 200) camera.position.copy(position);
-    else camera.position.lerp(position, state.reducedMotion ? 1 : 0.055);
+    desiredPosition.fromArray(pose.camera);
+    desiredLook.fromArray(pose.look);
+    if (isSmall && sceneProgress < 0.23) {
+      const pullback =
+        1 + 0.28 * (1 - THREE.MathUtils.smoothstep(sceneProgress, 0, 0.23));
+      desiredPosition
+        .sub(desiredLook)
+        .multiplyScalar(pullback)
+        .add(desiredLook);
+    }
+    desiredPosition.x += px * 0.22;
+    desiredPosition.y -= py * 0.12;
+    const ease =
+      state.reducedMotion || firstFrame ? 1 : 1 - Math.exp(-delta * 7);
+    camera.position.lerp(desiredPosition, ease);
+    cameraTarget.lerp(desiredLook, ease);
     camera.lookAt(cameraTarget);
+    sky.position.copy(camera.position);
+    const blend = interiorBlend(camera.position.z);
+    const outdoors = camera.position.z > -18;
+    sky.visible = outdoors;
+    scene.environment =
+      blend < 0.5 ? physical.environment.outdoor : physical.environment.indoor;
+    const outdoorIntensity =
+      state.light === "day" ? 0.55 : state.light === "night" ? 0.1 : 0.22;
+    scene.environmentIntensity = THREE.MathUtils.lerp(
+      outdoorIntensity,
+      0.6,
+      blend,
+    );
+    floorReflection.update(sceneProgress, camera, state.season);
+    sun.intensity = palette[state.light].direct * (1 - blend * 0.78);
+    hemisphere.intensity = palette[state.light].ambient * (1 - blend * 0.55);
+    [
+      island,
+      mountains,
+      northGrove,
+      westGrove,
+      foregroundTrees,
+      lake,
+      lakeTint,
+      orb,
+      halo,
+      stars,
+      ...mists,
+    ].forEach((object) => {
+      object.visible = outdoors;
+    });
+    // Celestial billboards sit on the horizon of the ground-level view;
+    // they must not appear as objects resting on roofs in the aerial shot.
+    orb.visible = halo.visible = outdoors && camera.position.y < 50;
+    stars.visible = outdoors && camera.position.y < 65;
+    particles.visible =
+      outdoors && state.season !== "rain" && !state.reducedMotion;
+    rain.visible = outdoors && state.season === "rain" && !state.reducedMotion;
+    scene.fog.color.set(palette[state.light].fog).lerp(interiorFog, blend);
+    const aerial = THREE.MathUtils.smoothstep(camera.position.y, 18, 100);
+    scene.fog.density = THREE.MathUtils.lerp(
+      THREE.MathUtils.lerp(
+        state.season === "rain" ? 0.0065 : 0.0035,
+        state.season === "rain" ? 0.0025 : 0.0012,
+        aerial,
+      ),
+      0.014,
+      blend,
+    );
+    journey.update({
+      progress: sceneProgress,
+      pose,
+      camera,
+      time: elapsed,
+      delta,
+      reducedMotion: state.reducedMotion,
+      light: state.light,
+      season: state.season,
+      exploring: state.route?.current.exploring,
+    });
+    host.dataset.journey = progress.toFixed(3);
+    firstFrame = false;
+    lastProgress = progress;
     lake.material.uniforms.waveTime.value = elapsed;
     if (!state.reducedMotion) {
       for (let i = 0; i < particleCount; i++) {
@@ -946,16 +1266,26 @@ export function createWorld(host, initial) {
         mist.position.x += Math.sin(elapsed * 0.07 + index) * delta * 0.13;
       });
     }
-    renderer.render(scene, camera);
+    if (composer) composer.render(delta);
+    else renderer.render(scene, camera);
+    // Reveal only after decoded textures and the HDR probe have actually
+    // appeared in a rendered frame, rather than after geometry creation.
+    if (assetsReady && !readySent) {
+      readySent = true;
+      resolveReady();
+    }
     dirty = false;
   }
   // Start at the final camera location; never fly in from the origin.
-  camera.position.set(22, mobile ? 14 : 13.5, mobile ? 39 : 36);
+  camera.position.fromArray(
+    journeyPose(state.route?.current.progress || 0).camera,
+  );
   update(initial);
   resize();
   frame = requestAnimationFrame(draw);
 
   return {
+    ready,
     update,
     dispose() {
       disposed = true;
@@ -969,7 +1299,6 @@ export function createWorld(host, initial) {
       const geometries = new Set(),
         materials = new Set(),
         textures = new Set([
-          stoneMap,
           glowTexture,
           fogTexture,
           flakeTexture,
@@ -980,9 +1309,19 @@ export function createWorld(host, initial) {
         if (object.material) materials.add(object.material);
       });
       geometries.forEach((g) => g.dispose());
-      materials.forEach((m) => m.dispose());
+      materials.forEach((m) => {
+        for (const value of Object.values(m))
+          if (value?.isTexture) textures.add(value);
+        m.dispose();
+      });
       textures.forEach((t) => t.dispose());
       lake.getRenderTarget().dispose();
+      floorReflection.dispose();
+      journey.dispose();
+      physical.dispose();
+      composer?.passes.forEach((pass) => pass.dispose?.());
+      composer?.dispose();
+      sun.shadow.map?.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     },

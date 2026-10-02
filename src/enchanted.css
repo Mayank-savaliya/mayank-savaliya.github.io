@@ -1,0 +1,1124 @@
+/* Parchment, printer's ornaments, and independent moving photographs. */
+.story::before,
+.spellbook::before,
+.contact-section::before {
+  inset: 0 calc((100% - 100vw) / 2);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.hero h1 {
+  font-family: var(--book-type);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+.hero h1 em {
+  font-family: var(--handwriting);
+  font-style: normal;
+  font-size: 1.2em;
+  line-height: 0.85;
+  letter-spacing: 0;
+}
+.hero-introduction {
+  font-family: var(--book-type);
+  font-size: 27px;
+  line-height: 1.45;
+}
+.hero-description {
+  max-width: 385px;
+}
+.story h2,
+.spellbook h2,
+.contact-section h2 {
+  font-family: var(--book-type);
+}
+.story h2 em,
+.spellbook h2 em,
+.contact-section h2 em {
+  font-family: var(--handwriting);
+  font-style: normal;
+  font-size: 1.22em;
+  letter-spacing: 0;
+}
+.career-heading h3 {
+  font-family: var(--book-type);
+}
+.ink-ornament {
+  width: 155px;
+  height: 25px;
+  color: #785934;
+}
+.engraved-corners {
+  position: absolute;
+  inset: 9px;
+  color: #80663e;
+  pointer-events: none;
+  z-index: 2;
+}
+.engraved-corner {
+  position: absolute;
+  width: 45px;
+  height: 45px;
+}
+.corner-tl {
+  top: 0;
+  left: 0;
+}
+.corner-tr {
+  top: 0;
+  right: 0;
+  transform: rotate(90deg);
+}
+.corner-br {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+}
+.corner-bl {
+  bottom: 0;
+  left: 0;
+  transform: rotate(270deg);
+}
+.transfiguration-section {
+  position: relative;
+  padding-top: 72px;
+  padding-bottom: 55px;
+}
+.transfiguration-parchment {
+  position: relative;
+  color: #43321f;
+  background-color: #eee1c0;
+  background-image:
+    radial-gradient(ellipse at 8% 12%, #a3753333, transparent 38%),
+    radial-gradient(ellipse at 96% 80%, #b0843638, transparent 45%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23714e24' opacity='.12' filter='url(%23n)' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+  border: 1px solid #ad8a51;
+  padding: 50px 55px 27px;
+  margin-top: 32px;
+  box-shadow:
+    4px 5px 0 #bdaa7e,
+    8px 10px 0 #88754e,
+    14px 18px 0 #382e20,
+    0 25px 70px #0005,
+    inset 0 0 95px #8e592720;
+}
+.transfiguration-parchment::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid #84633770;
+  pointer-events: none;
+}
+.transfiguration-parchment > .engraved-corners {
+  inset: 7px;
+}
+.transfiguration-parchment > .engraved-corners .engraved-corner {
+  width: 71px;
+  height: 71px;
+}
+.transfiguration-title {
+  text-align: center;
+}
+.transfiguration-title > .eyebrow {
+  color: #785737;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+}
+.transfiguration-title h2 {
+  font: 400 clamp(48px, 5.1vw, 76px) / 1.2 var(--book-type);
+  margin-top: 17px;
+  letter-spacing: -0.02em;
+}
+.transfiguration-title .ink-ornament {
+  margin: 2px auto 0;
+  width: 210px;
+  height: 30px;
+}
+.transfiguration-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 60px;
+  align-items: start;
+  margin-top: 36px;
+}
+.transfiguration-copy {
+  padding-top: 3px;
+}
+.script-introduction {
+  font: 400 47px/1.05 var(--handwriting);
+  color: #765333;
+  margin-bottom: 27px;
+}
+.transfiguration-copy > p:not(.script-introduction) {
+  font: 400 21px/1.6 var(--book-type);
+  margin-bottom: 16px;
+  color: #57432d;
+}
+.transfiguration-copy > p.drop-cap::first-letter {
+  float: left;
+  font: 400 65px/0.9 var(--book-type);
+  padding: 11px 7px 0 0;
+  color: #6a4425;
+}
+.spell-lessons {
+  display: grid;
+  gap: 18px;
+  margin-top: 31px;
+}
+.spell-lessons > div {
+  display: flex;
+  align-items: center;
+  gap: 19px;
+}
+.lesson-seal {
+  border: 3px double #8b6c42;
+  border-radius: 50%;
+  width: 47px;
+  height: 47px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font: 20px var(--book-type);
+  padding-top: 5px;
+  color: #735532;
+  box-shadow: inset 0 0 12px #a7803230;
+}
+.spell-lessons h3 {
+  font: 400 25px/1.15 var(--book-type);
+}
+.spell-lessons p {
+  font: 400 17px/1.4 var(--book-type);
+  color: #70583d;
+  margin-top: 3px;
+}
+.ink-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 23px;
+  font-family: var(--book-type);
+  font-size: 19px;
+  padding-block: 8px 2px;
+  margin-top: 28px;
+  border-bottom: 1px solid #89673f;
+}
+.ink-link:hover {
+  color: #8f431c;
+}
+.transfiguration-card {
+  position: relative;
+  background: #e0cd9e;
+  background-image:
+    radial-gradient(ellipse at 50% 35%, #f7edce, transparent 60%),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      #956b2805 3px,
+      #956b2805 4px
+    );
+  border: 4px double #846337;
+  padding: 28px 25px 18px;
+  box-shadow:
+    inset 0 0 65px #a2712336,
+    0 6px 16px #42291415;
+  min-width: 0;
+}
+.transfiguration-card > .engraved-corners {
+  inset: 5px;
+}
+.transfiguration-card .engraved-corner {
+  width: 39px;
+  height: 39px;
+}
+.specimen-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-family: var(--display);
+  font-size: 8px;
+  color: #755735;
+  letter-spacing: 0.06em;
+}
+.morph-visual {
+  height: 305px;
+  position: relative;
+  width: 100%;
+}
+.morph-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.morph-shape {
+  fill: #fffdf5;
+  stroke: #3e1600;
+  stroke-width: 1;
+}
+.specimen-copy {
+  text-align: center;
+  min-height: 146px;
+}
+.specimen-copy .eyebrow {
+  color: #775c39;
+  font-size: 7px;
+  letter-spacing: 0.1em;
+}
+.specimen-copy h3 {
+  font: 400 42px/1.2 var(--book-type);
+  margin-top: 11px;
+}
+.specimen-copy p {
+  font: 400 18px/1.4 var(--book-type);
+  margin: 4px auto 0;
+  max-width: 290px;
+  color: #6a5136;
+}
+.transfiguration-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.transfiguration-controls > button {
+  border: 1px solid #9d8359;
+  background: #efe0b88a;
+  color: #5d4024;
+  width: 39px;
+  height: 35px;
+  font-size: 21px;
+  line-height: 1;
+}
+.transfiguration-controls > button:hover {
+  background: #f7edcd;
+}
+.transfiguration-controls label {
+  min-width: 0;
+  width: 175px;
+}
+.transfiguration-controls select {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #947950;
+  padding: 8px 20px 8px 9px;
+  color: #4e3822;
+  font-size: 11px;
+  border-radius: 0;
+}
+.transfiguration-controls select option {
+  background: #efe2c1;
+  color: #3d2d1c;
+}
+.transfiguration-parchment :focus-visible {
+  outline: 2px solid #825624;
+  outline-offset: 4px;
+}
+.specimen-bottomline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #9b805559;
+  padding-top: 14px;
+  margin-top: 18px;
+  color: #6a5030;
+  font-size: 8px;
+}
+.transfiguration-pause {
+  background: transparent;
+  color: #61482b;
+  padding: 6px 0 6px 6px;
+  font-size: 9px;
+  min-height: 30px;
+}
+.transfiguration-pause:disabled {
+  cursor: default;
+}
+.parchment-colophon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 21px;
+  margin-top: 39px;
+  padding-top: 18px;
+  border-top: 1px solid #886e413f;
+  color: #856641;
+  font: 28px/1.3 var(--handwriting);
+}
+.parchment-colophon > .ink-ornament {
+  width: 65px;
+  height: 20px;
+}
+
+/* The Chronicle's photographs move within their own printed frames. */
+.newspaper {
+  --paper: #e8dcc1;
+  --ink: #372e23;
+  border: 1px solid #d3bb88;
+  box-shadow:
+    0 35px 95px #0005,
+    inset 0 0 120px #8653282a;
+  transform: rotate(-0.2deg);
+}
+.newspaper::before {
+  background: #b8a686;
+}
+.newspaper::after {
+  background: #9b8867;
+}
+.front-page-title {
+  padding-block: 33px 26px;
+}
+.front-page-title h3 {
+  font-family: var(--book-type);
+  font-weight: 400;
+  font-size: clamp(48px, 5.3vw, 77px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  margin: 16px 0 4px;
+}
+.front-page-title h3 em {
+  font-family: var(--handwriting);
+  font-size: 1.17em;
+  font-style: normal;
+  letter-spacing: 0;
+}
+.front-page-title > p {
+  font-family: var(--book-type);
+  font-size: 19px;
+  margin-top: 13px;
+}
+.living-edition {
+  border-top: 4px double #5a4831;
+  margin-top: 8px;
+  padding-top: 20px;
+}
+.living-edition-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  padding-bottom: 20px;
+}
+.living-edition-heading .eyebrow {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: #705a3c;
+}
+.living-edition-heading p {
+  font: 400 29px/1.25 var(--handwriting);
+  margin-top: 5px;
+  color: #6c4b2e;
+}
+.photograph-pause {
+  font: 11px var(--book-type);
+  color: #58412a;
+  background: transparent;
+  border: 1px solid #8c77516b;
+  padding: 10px 14px 8px;
+  min-height: 36px;
+  white-space: nowrap;
+}
+.photograph-pause:hover:not(:disabled) {
+  background: #ad8d4330;
+}
+.photograph-pause:disabled {
+  cursor: default;
+}
+.living-photo-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  grid-template-rows: 222px 222px;
+  gap: 19px;
+}
+.living-photo {
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.living-photo--lead {
+  grid-row: 1 / 3;
+}
+.living-photo--wide {
+  grid-column: 2 / 4;
+}
+.living-photo-frame {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  background: #f3f3ef;
+  cursor: zoom-in;
+  padding: 4px;
+  border: 4px double #51402a;
+}
+.living-photo-frame:focus-visible {
+  outline: 2px solid #7b582f;
+  outline-offset: 4px;
+}
+.living-photo-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 12px #231a161a;
+  pointer-events: none;
+  border: 5px solid #c5ad8355;
+}
+.living-photo-still,
+.living-photo-video {
+  position: absolute;
+  inset: 4px;
+  display: block;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  object-fit: contain;
+}
+.living-photo-video {
+  z-index: 1;
+  opacity: 0;
+}
+.photo-ready .living-photo-video {
+  opacity: 1;
+}
+.photograph-expand {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: #eee5cedf;
+  border: 1px solid #8c775188;
+  color: #40311d;
+  font: 19px/1 var(--serif);
+}
+.photo-ready .living-photo-still {
+  visibility: hidden;
+}
+.photograph-number {
+  position: absolute;
+  top: 11px;
+  left: 12px;
+  z-index: 2;
+  color: #f1e2c6;
+  background: #33291bd4;
+  border: 1px solid #c9b99b88;
+  min-width: 22px;
+  height: 24px;
+  padding: 2px 5px 0;
+  font: 15px var(--book-type);
+  text-align: center;
+}
+.living-photo figcaption {
+  padding-top: 9px;
+}
+.living-photo figcaption > span {
+  display: block;
+  font-size: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #786040;
+}
+.living-photo figcaption strong {
+  display: block;
+  font: 400 19px/1.15 var(--book-type);
+  margin-top: 6px;
+  color: #3c3022;
+}
+.living-photo--lead figcaption strong {
+  font-size: 26px;
+}
+.living-photo--wide figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.living-photo--wide figcaption strong {
+  margin: 0;
+}
+.living-edition-rule {
+  border-top: 1px solid #856c474f;
+  margin-top: 19px;
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font: italic 14px var(--serif);
+  color: #785b3b;
+}
+.work-column-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 38px 0 15px;
+}
+.work-column-heading h3 {
+  font: 400 37px/1.2 var(--book-type);
+  padding-top: 8px;
+}
+.work-column-heading .ink-ornament {
+  width: 105px;
+  height: 21px;
+}
+.news-article {
+  padding: 30px 25px 34px 0;
+}
+.news-article:nth-child(even) {
+  padding-left: 25px;
+}
+.project-photo-mount {
+  position: relative;
+  padding: 15px;
+  border: 1px solid #7d69413d;
+  background: #dac59d60;
+}
+.project-photo-mount > .engraved-corners {
+  inset: 4px;
+}
+.project-photo-mount .engraved-corner {
+  width: 25px;
+  height: 25px;
+}
+.article-image-link img {
+  height: 245px;
+  padding: 2px;
+  border-color: #796b4c60;
+  transition: none;
+}
+.article-image-link:hover img {
+  transform: none;
+}
+.article-image-link figcaption {
+  font-family: var(--book-type);
+  font-size: 15px;
+  color: #675439;
+}
+.article-kicker,
+.article-name {
+  color: #654d30;
+}
+.news-article h4 {
+  font-family: var(--book-type);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin-top: 12px;
+}
+.article-description {
+  font-family: var(--book-type);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.55;
+  color: #58452d;
+}
+.article-description::first-letter {
+  margin-top: 7px;
+  color: #774b27;
+}
+.article-footer > span {
+  color: #6c5638;
+}
+.desk-heading h3 {
+  font-family: var(--book-type);
+  font-weight: 400;
+  font-size: 33px;
+}
+.field-notes h4 {
+  font-family: var(--book-type);
+  font-weight: 400;
+  font-size: 27px;
+}
+.field-notes p {
+  font-family: var(--book-type);
+  font-weight: 400;
+  font-size: 18px;
+  color: #58452d;
+}
+.field-notes .eyebrow {
+  color: #79603e;
+  font-size: 7px;
+}
+
+/* Each discipline is a separate leaf from the same well-used spellbook. */
+.spellbook-grid {
+  background: transparent;
+  box-shadow: none;
+  gap: 25px;
+}
+.spellbook-grid::after {
+  content: none;
+}
+.skill-page,
+.skill-page:nth-child(3n) {
+  min-width: 0;
+  background-color: #e5d5ae;
+  background-image:
+    radial-gradient(ellipse at top right, #a3772b18, transparent 60%),
+    linear-gradient(
+      100deg,
+      #b5a07222,
+      transparent 30%,
+      #f8eaca22 70%,
+      #a7804133
+    );
+  border: 1px solid #a68b58;
+  color: #3c3122;
+  box-shadow:
+    3px 4px 0 #9e8b624d,
+    inset 0 0 35px #9c712314;
+  padding: 35px 29px 38px;
+}
+.skill-page > .engraved-corners {
+  inset: 5px;
+}
+.skill-page .engraved-corner {
+  width: 28px;
+  height: 28px;
+}
+.skill-number {
+  color: #785a31;
+  margin-bottom: 20px;
+}
+.skill-number > span {
+  font-family: var(--book-type);
+  font-style: normal;
+}
+.skill-page > .eyebrow {
+  color: #735939;
+}
+.skill-page h3 {
+  font-family: var(--book-type);
+  font-weight: 400;
+  font-size: 33px;
+  line-height: 1.1;
+}
+.skill-page li {
+  border-color: #826c4050;
+  color: #554329;
+  padding: 5px 8px;
+}
+.book-colophon {
+  font-family: var(--handwriting);
+  font-size: 30px;
+}
+.letter-paper > span {
+  font-family: var(--book-type);
+}
+.letter-paper > span em {
+  font-family: var(--handwriting);
+  font-size: 1.35em;
+  font-style: normal;
+}
+
+@media (max-width: 1150px) {
+  .transfiguration-parchment {
+    padding: 43px 37px 25px;
+  }
+  .transfiguration-layout {
+    gap: 33px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .transfiguration-copy > p:not(.script-introduction) {
+    font-size: 19px;
+  }
+  .script-introduction {
+    font-size: 41px;
+  }
+  .transfiguration-card {
+    padding-inline: 17px;
+  }
+  .spell-lessons h3 {
+    font-size: 23px;
+  }
+  .spell-lessons p {
+    font-size: 16px;
+  }
+  .morph-visual {
+    height: 275px;
+  }
+  .living-photo-grid {
+    grid-template-rows: 200px 200px;
+    gap: 15px;
+  }
+  .living-photo--wide figcaption > span {
+    display: none;
+  }
+  .living-photo figcaption strong {
+    font-size: 18px;
+  }
+  .living-photo--lead figcaption strong {
+    font-size: 23px;
+  }
+  .spellbook-grid {
+    gap: 18px;
+  }
+  .skill-page {
+    padding: 29px 22px 32px;
+  }
+}
+@media (max-width: 960px) {
+  .transfiguration-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .transfiguration-copy {
+    max-width: 610px;
+    margin: auto;
+  }
+  .transfiguration-card {
+    max-width: 450px;
+    width: 100%;
+    margin: auto;
+  }
+  .transfiguration-copy > p:not(.script-introduction) {
+    font-size: 21px;
+  }
+  .script-introduction {
+    font-size: 47px;
+  }
+  .spell-lessons {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .transfiguration-card .morph-visual {
+    height: 315px;
+  }
+  .living-photo-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 280px 220px;
+  }
+  .living-photo--lead {
+    grid-row: auto;
+  }
+  .living-photo--wide {
+    grid-column: auto;
+  }
+  .living-photo--wide figcaption {
+    display: block;
+  }
+  .living-photo--wide figcaption > span {
+    display: block;
+  }
+  .living-photo--wide figcaption strong {
+    margin-top: 6px;
+  }
+  .living-photo--lead figcaption strong {
+    font-size: 20px;
+  }
+  .living-photo figcaption strong {
+    font-size: 20px;
+  }
+  .living-photo figcaption > span {
+    font-size: 6px;
+  }
+  .article-image-link img {
+    height: 200px;
+  }
+  .project-photo-mount {
+    padding: 11px;
+  }
+  .news-article h4 {
+    font-size: 34px;
+  }
+  .hero h1 {
+    font-size: 87px;
+  }
+}
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: clamp(56px, 11vw, 80px);
+  }
+  .hero h1 em {
+    font-size: 1.27em;
+  }
+  .hero-introduction {
+    font-size: 23px;
+  }
+  .transfiguration-section {
+    padding-top: 25px;
+    padding-bottom: 25px;
+  }
+  .transfiguration-parchment {
+    margin-top: 24px;
+    padding: 38px 26px 23px;
+    box-shadow:
+      3px 4px 0 #bdaa7e,
+      6px 8px 0 #88754e,
+      9px 12px 0 #382e20,
+      0 20px 40px #0003;
+  }
+  .transfiguration-parchment > .engraved-corners .engraved-corner {
+    width: 49px;
+    height: 49px;
+  }
+  .transfiguration-parchment::before {
+    inset: 11px;
+  }
+  .transfiguration-title > .eyebrow {
+    font-size: 7px;
+    max-width: 190px;
+    display: block;
+    margin: auto;
+  }
+  .transfiguration-title h2 {
+    font-size: clamp(33px, 7.7vw, 49px);
+    margin-top: 14px;
+  }
+  .transfiguration-title .ink-ornament {
+    width: 160px;
+    height: 25px;
+  }
+  .transfiguration-layout {
+    margin-top: 24px;
+  }
+  .script-introduction {
+    font-size: 40px;
+    margin-bottom: 20px;
+  }
+  .transfiguration-copy > p:not(.script-introduction) {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .transfiguration-copy > p.drop-cap::first-letter {
+    font-size: 55px;
+    padding-top: 10px;
+  }
+  .spell-lessons {
+    margin-top: 23px;
+  }
+  .spell-lessons > div {
+    gap: 13px;
+  }
+  .spell-lessons h3 {
+    font-size: 21px;
+  }
+  .spell-lessons p {
+    font-size: 16px;
+  }
+  .lesson-seal {
+    width: 39px;
+    height: 39px;
+    font-size: 17px;
+  }
+  .ink-link {
+    font-size: 18px;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .transfiguration-card {
+    padding-inline: 15px;
+  }
+  .transfiguration-card .morph-visual {
+    height: 270px;
+  }
+  .specimen-topline {
+    font-size: 6px;
+  }
+  .specimen-copy {
+    min-height: 137px;
+  }
+  .specimen-copy h3 {
+    font-size: 38px;
+  }
+  .specimen-copy p {
+    font-size: 17px;
+  }
+  .specimen-copy .eyebrow {
+    font-size: 6px;
+  }
+  .specimen-bottomline {
+    font-size: 7px;
+  }
+  .transfiguration-controls {
+    gap: 8px;
+  }
+  .transfiguration-controls > button {
+    width: 32px;
+    height: 35px;
+  }
+  .transfiguration-controls label {
+    width: 146px;
+  }
+  .transfiguration-controls select {
+    font-size: 10px;
+  }
+  .transfiguration-pause {
+    font-size: 8px;
+  }
+  .parchment-colophon {
+    font-size: 26px;
+    text-align: center;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .parchment-colophon .ink-ornament {
+    display: none;
+  }
+  .front-page-title h3 {
+    font-size: 43px;
+    line-height: 1.15;
+  }
+  .front-page-title h3 em {
+    font-size: 1.06em;
+  }
+  .front-page-title > p {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  .living-edition-heading {
+    align-items: flex-start;
+    gap: 13px;
+    flex-direction: column;
+  }
+  .living-edition-heading .eyebrow {
+    font-size: 7px;
+  }
+  .living-edition-heading p {
+    font-size: 29px;
+  }
+  .photograph-pause {
+    font-size: 12px;
+    padding: 8px 11px 5px;
+  }
+  .living-photo-grid {
+    grid-template-rows: 205px 205px;
+    gap: 18px 12px;
+  }
+  .living-photo-frame {
+    border-width: 3px;
+    padding: 2px;
+  }
+  .living-photo figcaption strong {
+    font-size: 18px;
+    line-height: 1.2;
+    margin-top: 4px;
+  }
+  .living-photo figcaption > span {
+    font-size: 5px;
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+  }
+  .photograph-number {
+    top: 6px;
+    left: 6px;
+    height: 20px;
+    min-width: 18px;
+    font-size: 13px;
+    padding-inline: 4px;
+  }
+  .living-edition-rule {
+    font-size: 11px;
+    gap: 20px;
+    line-height: 1.4;
+  }
+  .living-edition-rule > span {
+    flex: 1;
+  }
+  .living-edition-rule > span:last-child {
+    text-align: right;
+  }
+  .work-column-heading {
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .work-column-heading h3 {
+    font-size: 29px;
+    white-space: nowrap;
+  }
+  .work-column-heading .ink-ornament {
+    width: 42px;
+  }
+  .news-article,
+  .news-article:nth-child(even) {
+    padding: 25px 0 27px;
+  }
+  .project-photo-mount {
+    padding: 14px;
+  }
+  .article-image-link img {
+    height: 235px;
+  }
+  .news-article h4 {
+    font-size: 35px;
+  }
+  .article-description {
+    font-size: 19px;
+  }
+  .spellbook-grid {
+    gap: 22px;
+  }
+  .skill-page,
+  .skill-page:nth-child(3n) {
+    padding: 29px 25px 34px;
+  }
+  .book-colophon {
+    font-size: 24px;
+  }
+}
+@media (max-width: 600px) {
+  .spellbook-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .skill-page li {
+    font-size: 10px;
+    padding: 6px 9px;
+  }
+  .skill-page > .eyebrow {
+    font-size: 8px;
+  }
+}
+@media (max-width: 380px) {
+  .transfiguration-parchment {
+    padding-inline: 20px;
+  }
+  .transfiguration-copy > p:not(.script-introduction) {
+    font-size: 17px;
+  }
+  .script-introduction {
+    font-size: 36px;
+  }
+  .transfiguration-card {
+    padding-inline: 11px;
+  }
+  .transfiguration-card .morph-visual {
+    height: 240px;
+  }
+  .transfiguration-controls label {
+    width: 123px;
+  }
+  .transfiguration-title h2 {
+    font-size: 29px;
+  }
+  .living-photo-grid {
+    grid-template-rows: 198px 198px;
+    gap: 16px 10px;
+  }
+  .living-photo figcaption strong {
+    font-size: 16px;
+  }
+  .front-page-title h3 {
+    font-size: 36px;
+  }
+  .work-column-heading h3 {
+    font-size: 25px;
+  }
+  .article-image-link img {
+    height: 200px;
+  }
+}

@@ -7,6 +7,8 @@
 @import "@fontsource/cormorant-garamond/latin-500-italic.css";
 @import "@fontsource/cinzel/latin-400.css";
 @import "@fontsource/unifrakturcook/latin-700.css";
+@import "@fontsource/benne/latin-400.css";
+@import "@fontsource/imperial-script/latin-400.css";
 
 :root {
   font-family: "DM Sans", sans-serif;
@@ -20,6 +22,8 @@
   --ink: #272d27;
   --serif: "Cormorant Garamond", Georgia, serif;
   --display: "Cinzel", Georgia, serif;
+  --book-type: "Benne", Georgia, serif;
+  --handwriting: "Imperial Script", cursive;
   --page-width: 1280px;
   scroll-behavior: smooth;
   scroll-padding-top: 105px;
@@ -1370,23 +1374,6 @@ button {
   background: #cbb585;
   color: #16272b;
   border-color: #d8c79f;
-}
-.motion-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 14px 0;
-  border-top: 1px solid var(--line);
-  background: none;
-  font-size: 10px;
-}
-.atmosphere-panel > small {
-  font-size: 8px;
-  line-height: 1.6;
-  display: block;
-  color: #a0aa9a;
-  margin-top: 5px;
 }
 @media (min-width: 1700px) {
   .hero-content {

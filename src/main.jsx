@@ -2,4 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./styles.css";
+import "./enchanted.css";
+import "./journey.css";
+import "./intro.css";
 createRoot(document.getElementById("root")).render(<App />);

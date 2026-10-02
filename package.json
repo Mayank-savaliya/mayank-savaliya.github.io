@@ -9,15 +9,19 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --test src/lib/atmosphere.test.js",
+    "test": "node --test src/lib/*.test.js",
+    "prepare:logos": "node scripts/prepare-logo-shapes.mjs",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
+    "@fontsource/benne": "^5.3.0",
     "@fontsource/cinzel": "^5.3.0",
     "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/imperial-script": "^5.3.0",
     "@fontsource/unifrakturcook": "^5.3.0",
+    "gsap": "^3.15.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "three": "^0.186.1"

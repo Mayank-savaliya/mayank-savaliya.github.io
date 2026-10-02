@@ -5,8 +5,6 @@ export default function AtmosphereControls({
   atmosphere,
   overrides,
   setOverrides,
-  reducedMotion,
-  toggleMotion,
 }) {
   const [open, setOpen] = useState(false);
   const panel = useRef(null);
@@ -73,17 +71,6 @@ export default function AtmosphereControls({
               ))}
             </div>
           </fieldset>
-          <button
-            className="motion-toggle"
-            onClick={toggleMotion}
-            aria-pressed={reducedMotion}
-          >
-            <span>
-              {reducedMotion ? "Stillness is on" : "Gentle motion is on"}
-            </span>
-            <span aria-hidden="true">{reducedMotion ? "▶" : "Ⅱ"}</span>
-          </button>
-          <small>Snow Nov–Feb · Summer Mar–Jun · Rain Jul–Oct</small>
         </div>
       )}
       <button
@@ -102,9 +89,9 @@ export default function AtmosphereControls({
               : "☼"}
         </span>
         <span>
-          {atmosphereLabels[atmosphere.light]}
+          <span>{atmosphereLabels[atmosphere.light]}</span>
           <i>·</i>
-          {atmosphereLabels[atmosphere.season]}
+          <span>{atmosphereLabels[atmosphere.season]}</span>
         </span>
         <span aria-hidden="true" className="settings-mark">
           {open ? "−" : "+"}

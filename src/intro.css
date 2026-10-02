@@ -1,0 +1,326 @@
+/* A single invitation, followed only by the Deathly Hallows spell. */
+.portfolio-site {
+  transition: opacity 1s ease;
+}
+.portfolio-site--veiled {
+  opacity: 0;
+  pointer-events: none;
+}
+#main:focus {
+  outline: none;
+}
+.magical-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow: hidden;
+  color: #eae3d0;
+  background: #05090d;
+  font-family: "DM Sans", sans-serif;
+  outline: none;
+  transition:
+    opacity 0.75s ease,
+    visibility 0.75s;
+}
+.magical-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 47%, #13232985, transparent 54%),
+    linear-gradient(transparent 65%, #030609 100%);
+}
+.magical-intro--leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.intro-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.intro-art {
+  position: relative;
+  width: min(620px, 93vw, 86svh);
+  aspect-ratio: 1;
+}
+.hallows-mark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0;
+}
+.intro-sparks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.intro-invitation {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 30px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 38px;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.intro-poem {
+  display: block;
+  margin-top: 50px;
+  font:
+    400 clamp(40px, 5.4vw, 76px) / 1.08 "Cormorant Garamond",
+    Georgia,
+    serif;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 40px #ccddda10;
+}
+.intro-poem em {
+  color: #d6bd86;
+  font-weight: 400;
+}
+.intro-touch {
+  color: #a6aca6;
+  font:
+    400 9px "DM Sans",
+    sans-serif;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+.intro-invitation:focus-visible {
+  outline: none;
+}
+.intro-invitation:focus-visible .intro-touch {
+  color: #f1d496;
+  text-decoration: underline;
+  text-underline-offset: 8px;
+}
+.intro-first-spark {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #fff1ca;
+  box-shadow:
+    0 0 8px 2px #dec390,
+    0 0 28px 7px #c5d8ee55,
+    0 0 75px 14px #cbdfec13;
+  animation: first-spark-breathe 4s ease-in-out infinite;
+}
+@keyframes first-spark-breathe {
+  50% {
+    opacity: 0.5;
+    box-shadow:
+      0 0 5px 1px #dec390,
+      0 0 35px 8px #c5d8ee44;
+  }
+}
+.intro-mist {
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  width: 115%;
+  height: 50%;
+  opacity: 0.4;
+  filter: blur(45px);
+}
+.intro-mist--one {
+  top: 4%;
+  left: -23%;
+  background: radial-gradient(ellipse, #3150592b, transparent 62%);
+  transform: rotate(-22deg);
+}
+.intro-mist--two {
+  top: 35%;
+  right: -28%;
+  background: radial-gradient(ellipse, #76878c16, transparent 62%);
+  transform: rotate(22deg);
+}
+.intro-reflection {
+  position: absolute;
+  width: 56%;
+  height: 11%;
+  left: 22%;
+  bottom: 3%;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse,
+    #cbb78029,
+    #afdcfa09 37%,
+    transparent 68%
+  );
+  filter: blur(14px);
+}
+.magical-intro--casting .hallows-mark {
+  opacity: 1;
+  animation: hallows-emerge 10s ease both;
+}
+.hallows-triangle,
+.hallows-circle,
+.hallows-wand-trace {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.hallows-elder-wand {
+  opacity: 0;
+}
+.magical-intro--casting .hallows-triangle {
+  animation: draw-hallow 3.8s 0.84s linear both;
+}
+.magical-intro--casting .hallows-circle {
+  animation: draw-hallow 3.6s 2.7s linear both;
+}
+.magical-intro--casting .hallows-wand-trace {
+  animation:
+    draw-hallow 1.96s 5.4s linear both,
+    wand-trace-fade 1s 7.1s linear forwards;
+}
+.magical-intro--casting .hallows-elder-wand {
+  animation: wand-materialize 1.6s 6.5s ease both;
+}
+.magical-intro--casting .hallows-aura {
+  animation: hallows-glow 10s ease both;
+}
+.magical-intro--casting .intro-reflection {
+  animation: intro-floor-glow 2.4s 6s ease both;
+}
+.magical-intro--casting .intro-mist--one {
+  animation: intro-mist-drift 12s ease both;
+}
+.magical-intro--casting .intro-mist--two {
+  animation: intro-mist-drift 12s ease reverse both;
+}
+@keyframes draw-hallow {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes wand-trace-fade {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes wand-materialize {
+  from {
+    opacity: 0;
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes hallows-emerge {
+  0% {
+    transform: scale(0.97);
+  }
+  65%,
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes hallows-glow {
+  0% {
+    opacity: 0.2;
+  }
+  60% {
+    opacity: 0.65;
+  }
+  78% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.28;
+  }
+}
+@keyframes intro-floor-glow {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes intro-mist-drift {
+  to {
+    transform: translate(12%, 10%) rotate(-10deg);
+  }
+}
+:is(.magical-intro--holding, .magical-intro--leaving)
+  :is(.hallows-mark, .hallows-elder-wand) {
+  opacity: 1;
+  transform: none;
+}
+:is(.magical-intro--holding, .magical-intro--leaving)
+  :is(.hallows-triangle, .hallows-circle) {
+  stroke-dashoffset: 0;
+}
+:is(.magical-intro--holding, .magical-intro--leaving) .hallows-aura {
+  opacity: 0.28;
+}
+.magical-intro--still *,
+.magical-intro--still *::before {
+  animation: none !important;
+  transition-duration: 0.1s !important;
+}
+.magical-intro--still .intro-sparks {
+  display: none;
+}
+.magical-intro--still.magical-intro--casting
+  :is(.hallows-mark, .hallows-elder-wand) {
+  opacity: 1;
+  transform: none;
+}
+.magical-intro--still.magical-intro--casting
+  :is(.hallows-triangle, .hallows-circle) {
+  stroke-dashoffset: 0;
+}
+.magical-intro--still .hallows-aura {
+  opacity: 0.2;
+}
+@media (max-width: 600px) {
+  .intro-invitation {
+    padding: 22px;
+    gap: 30px;
+  }
+  .intro-poem {
+    margin-top: 25px;
+  }
+  .intro-touch {
+    font-size: 8px;
+    letter-spacing: 0.2em;
+  }
+}
+@media (max-height: 500px) {
+  .intro-invitation {
+    gap: 20px;
+  }
+  .intro-poem {
+    margin-top: 0;
+    font-size: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-site {
+    transition: none;
+  }
+}
