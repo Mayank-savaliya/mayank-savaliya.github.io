@@ -1,0 +1,92 @@
+[
+  {
+    "file": "stone-color.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_blocks_03/medieval_blocks_03_diff_1k.jpg",
+    "source": "https://polyhaven.com/a/medieval_blocks_03",
+    "author": "Rob Tuytel",
+    "license": "CC0-1.0",
+    "sha256": "3852b4a60e0f62d2914c895f884df8d58d8d12d788851d814859dae05b7620cf",
+    "bytes": 954113
+  },
+  {
+    "file": "stone-normal.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_blocks_03/medieval_blocks_03_nor_gl_1k.jpg",
+    "source": "https://polyhaven.com/a/medieval_blocks_03",
+    "author": "Rob Tuytel",
+    "license": "CC0-1.0",
+    "sha256": "52350ed4b577c9fd6b03effda069181ca0ed39ee99d88b912685266f6270c943",
+    "bytes": 1352681
+  },
+  {
+    "file": "stone-arm.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/medieval_blocks_03/medieval_blocks_03_arm_1k.jpg",
+    "source": "https://polyhaven.com/a/medieval_blocks_03",
+    "author": "Rob Tuytel",
+    "license": "CC0-1.0",
+    "sha256": "23da19a147a3425ddff969b32f6a4502600e785e06c9a0398d4f1ffc20b676db",
+    "bytes": 569201
+  },
+  {
+    "file": "slate-color.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_slates_02/roof_slates_02_diff_1k.jpg",
+    "source": "https://polyhaven.com/a/roof_slates_02",
+    "author": "Rob Tuytel",
+    "license": "CC0-1.0",
+    "sha256": "de3d2729ab385c5f7dd7106d3b435c737f6d2c3ea8883cea37de53cec2a34867",
+    "bytes": 515626
+  },
+  {
+    "file": "slate-normal.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_slates_02/roof_slates_02_nor_gl_1k.jpg",
+    "source": "https://polyhaven.com/a/roof_slates_02",
+    "author": "Rob Tuytel",
+    "license": "CC0-1.0",
+    "sha256": "32be0c0ba1565856156a315dc98a773d72f1a03415930657b8a8ad62bf60c1bf",
+    "bytes": 763206
+  },
+  {
+    "file": "slate-arm.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/roof_slates_02/roof_slates_02_arm_1k.jpg",
+    "source": "https://polyhaven.com/a/roof_slates_02",
+    "author": "Rob Tuytel",
+    "license": "CC0-1.0",
+    "sha256": "a43d670bb04a70d32502e8b976b0cb97dd975ccab04b8a612ac6543f2b89ad2a",
+    "bytes": 224234
+  },
+  {
+    "file": "floor-color.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/slate_floor/slate_floor_diff_1k.jpg",
+    "source": "https://polyhaven.com/a/slate_floor",
+    "author": "Dimitrios Savva",
+    "license": "CC0-1.0",
+    "sha256": "ca47f5ba941cca29af7c7c16f7c6e7a8ba9dbdeb440e26c7a166d2f3bae9ace5",
+    "bytes": 707276
+  },
+  {
+    "file": "floor-normal.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/slate_floor/slate_floor_nor_gl_1k.jpg",
+    "source": "https://polyhaven.com/a/slate_floor",
+    "author": "Dimitrios Savva",
+    "license": "CC0-1.0",
+    "sha256": "428be8ac8b4a389624eacfce2072754536949eca4323e7fd6ab0a5b5eb49ed7c",
+    "bytes": 812262
+  },
+  {
+    "file": "floor-arm.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/slate_floor/slate_floor_arm_1k.jpg",
+    "source": "https://polyhaven.com/a/slate_floor",
+    "author": "Dimitrios Savva",
+    "license": "CC0-1.0",
+    "sha256": "66c3caf0e5fb95fbf0e25037fcbd8279c56412458f30216fce63d25fb0d3af3d",
+    "bytes": 968182
+  },
+  {
+    "file": "cloudy-sky.hdr",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloofendal_48d_partly_cloudy_puresky_1k.hdr",
+    "source": "https://polyhaven.com/a/kloofendal_48d_partly_cloudy_puresky",
+    "author": "Greg Zaal; Jarod Guest",
+    "license": "CC0-1.0",
+    "sha256": "fd94c84997b8a3c353b62c2125a9b44e19509956986a126e472684432a02d798",
+    "bytes": 1435119
+  }
+]

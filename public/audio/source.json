@@ -1,0 +1,21 @@
+{
+  "title": "Hedwig's Theme",
+  "artist": "John Williams",
+  "album": "Harry Potter and the Sorcerer's Stone (Original Motion Picture Soundtrack)",
+  "page": "https://music.apple.com/us/song/hedwigs-theme/89285956",
+  "preview": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/81/ee/ae/81eeae0a-da63-1fc7-42c1-21b498b85de8/mzaf_13621452881875123588.plus.aac.p.m4a",
+  "file": "hedwigs-theme-intro.m4a",
+  "durationSeconds": 10,
+  "sourceExcerptSeconds": [
+    0,
+    10
+  ],
+  "processing": {
+    "fadeInSeconds": 1.2,
+    "fadeOutStartSeconds": 8,
+    "fadeOutSeconds": 2,
+    "gain": 0.75
+  },
+  "rights": "Copyright recording by John Williams. \u2117 2001 Warner Records Inc. Not a CC0 or original portfolio recording.",
+  "sha256": "b8408122a19c6cef0428767dba286f59bd7088b78d85ee76f9f9b13c3c7d87cf"
+}
